@@ -1,0 +1,118 @@
+// This is your Prisma schema file
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String         @id @default(cuid())
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  clerkUserId   String         @unique // For Clerk authentication
+  conversations Conversation[]
+  usageMetrics  UsageMetrics[] // Optional: keep if you want to track usage
+  //Subscription  Subscription[]
+}
+
+model Conversation {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  messages  Message[]
+  title     String? // Optional title for the conversation
+  summary   String? // Optional AI-generated summary
+
+  @@index([userId])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  createdAt      DateTime     @default(now())
+  content        String // The actual message content
+  role           MessageRole // Distinguishes between USER and ASSISTANT messages
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  audioUrl       String? // URL to stored audio file if voice message
+  sentiment      String? // Optional sentiment analysis
+  emotions       String[] // Array of detected emotions
+
+  @@index([conversationId])
+  @@index([role])
+}
+
+enum MessageRole {
+  USER // Messages from the human user
+  ASSISTANT // Messages from the AI assistant
+}
+
+// Optional: Keep if you want to track usage metrics
+model UsageMetrics {
+  id           String   @id @default(cuid())
+  createdAt    DateTime @default(now())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  messageCount Int      @default(0)
+  audioMinutes Float    @default(0)
+  month        DateTime // First day of the month for this metric
+
+  @@unique([userId, month])
+  @@index([userId])
+}
+
+// model Subscription {
+//   id        String   @id @default(cuid())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   // User relationship
+//   userId String
+//   user   User   @relation(fields: [userId], references: [id])
+
+//   // Stripe-specific fields
+//   stripeCustomerId     String? @unique // Stripe's customer ID
+//   stripePriceId        String? // Stripe's price ID
+//   stripeSubscriptionId String? @unique // Stripe's subscription ID
+
+//   // Subscription details
+//   status SubscriptionStatus @default(INACTIVE)
+//   plan   PlanType           @default(FREE)
+
+//   // Billing period
+//   currentPeriodStart DateTime
+//   currentPeriodEnd   DateTime
+
+//   // Trial period (if you offer trials)
+//   trialStart DateTime?
+//   trialEnd   DateTime?
+
+//   // Cancellation
+//   canceledAt   DateTime?
+//   cancelReason String?
+
+//   // Payment failure handling
+//   paymentFailedAt     DateTime?
+//   paymentFailureCount Int       @default(0)
+
+//   @@index([userId])
+// }
+
+// enum SubscriptionStatus {
+//   ACTIVE
+//   INACTIVE
+//   PAST_DUE
+//   CANCELED
+//   TRIALING
+// }
+
+// enum PlanType {
+//   FREE
+//   PREMIUM
+//   // You might add more like BASIC, PRO, etc.
+// }
