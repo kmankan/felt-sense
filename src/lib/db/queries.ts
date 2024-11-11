@@ -11,11 +11,11 @@ import { User, Conversation, Message, UsageMetrics } from '@prisma/client'
 // )
 
 // Types for return values including relations
-type UserWithConversation = User & {
-  conversations: (Conversation & {
-    messages: Message[]
-  })[]
-}
+// type UserWithConversation = User & {
+//   conversations: (Conversation & {
+//     messages: Message[]
+//   })[]
+// }
 
 type ConversationWithMessages = Conversation & {
   messages: Message[]
@@ -23,37 +23,34 @@ type ConversationWithMessages = Conversation & {
 
 // User Queries
 export const userQueries = {
-  getUserWithLatestConversation: async function(clerkUserId: string): Promise<UserWithConversation | null> {
-    return await prisma.user.findUnique({
-      where: { clerkUserId },
-      include: {
-        conversations: {
-          orderBy: { createdAt: 'desc' },
-          take: 1,
-          include: {
-            messages: {
-              orderBy: { createdAt: 'desc' },
-              take: 1,
-            },
-          },
-        },
-      },
-    })
-  },
 
   createUser: async function(
-    clerkUserId: string, 
-    email: string, 
-    name?: string
+    clerkUserId: string
   ): Promise<User> {
     return await prisma.user.create({
       data: {
         clerkUserId,
-        email,
-        name,
       },
     })
   }
+
+  // getUserWithLatestConversation: async function(clerkUserId: string): Promise<UserWithConversation | null> {
+  //   return await prisma.user.findUnique({
+  //     where: { clerkUserId },
+  //     include: {
+  //       conversations: {
+  //         orderBy: { createdAt: 'desc' },
+  //         take: 1,
+  //         include: {
+  //           messages: {
+  //             orderBy: { createdAt: 'desc' },
+  //             take: 1,
+  //           },
+  //         },
+  //       },
+  //     },
+  //   })
+  // },
 }
 
 // Conversation Queries
@@ -66,23 +63,6 @@ export const conversationQueries = {
       include: {
         messages: {
           orderBy: { createdAt: 'asc' },
-        },
-      },
-    })
-  },
-
-  getUserConversations: async function(
-    userId: string, 
-    take: number = 10
-  ): Promise<ConversationWithMessages[]> {
-    return await prisma.conversation.findMany({
-      where: { userId },
-      orderBy: { updatedAt: 'desc' },
-      take,
-      include: {
-        messages: {
-          orderBy: { createdAt: 'desc' },
-          take: 1,
         },
       },
     })
@@ -111,6 +91,7 @@ export const conversationQueries = {
 
 // Message Queries
 export const messageQueries = {
+
   addMessage: async function(
     conversationId: string,
     content: string,
@@ -147,37 +128,10 @@ export const messageQueries = {
       take,
     })
   },
-
-  getConversationContext: async function(
-    conversationId: string, 
-    messageCount: number = 5
-  ): Promise<Message[]> {
-    return await prisma.message.findMany({
-      where: { conversationId },
-      orderBy: { createdAt: 'desc' },
-      take: messageCount,
-    })
-  }
 }
 
 // Analytics Queries
 export const analyticsQueries = {
-  getCurrentMonthUsage: async function(
-    userId: string
-  ): Promise<UsageMetrics | null> {
-    const startOfMonth = new Date()
-    startOfMonth.setDate(1)
-    startOfMonth.setHours(0, 0, 0, 0)
-
-    return await prisma.usageMetrics.findUnique({
-      where: {
-        userId_month: {
-          userId,
-          month: startOfMonth,
-        },
-      },
-    })
-  },
 
   trackMessage: async function(userId: string): Promise<UsageMetrics> {
     const startOfMonth = new Date()
@@ -205,6 +159,7 @@ export const analyticsQueries = {
 
 // Search/Filter Queries
 export const searchQueries = {
+  
   searchConversations: async function(
     userId: string, 
     searchTerm: string
