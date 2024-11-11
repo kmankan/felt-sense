@@ -13,9 +13,7 @@ model User {
   id            String         @id @default(cuid())
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
-  email         String         @unique
   clerkUserId   String         @unique // For Clerk authentication
-  name          String?
   conversations Conversation[]
   usageMetrics  UsageMetrics[] // Optional: keep if you want to track usage
   //Subscription  Subscription[]
