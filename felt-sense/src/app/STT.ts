@@ -1,5 +1,6 @@
+"use server";
+
 import { createClient, FileSource } from "@deepgram/sdk";
-import type { NextApiRequest, NextApiResponse } from "next"; // Import Next.js types
 import fs from "fs";
 import path from "path";
 
@@ -47,6 +48,7 @@ if (!process.env.DEEPGRAM_API_KEY) {
 export const transcribeFile = async (
   audioFile: FileSource
 ): Promise<string> => {
+  console.log("transcribing file");
   const deepgram = createClient(process.env.DEEPGRAM_API_KEY);
   // const audio = fs.createReadStream("test.m4a");
   const { result, error } = await deepgram.listen.prerecorded.transcribeFile(

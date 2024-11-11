@@ -1,11 +1,9 @@
-import Image from "next/image";
-import STT from "./STT";
-
-// call some helper funtion that does deepgram stuff
-const getStt = STT()
-
+import React from "react";
 export default function Home() {
+
   return (
-    <STT text={getStt} />
-  )
+    <div>
+      <h1>Felt Sense</h1>
+    </div>
+  );
 }
