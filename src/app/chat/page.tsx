@@ -46,6 +46,12 @@ export default function Home() {
       <h1>Felt Sense</h1>
       <button onClick={recordAudio}>Record Audio</button>
       <button onClick={stopAudio}>Stop Audio</button>
+      <div className="flex absolute top-1/2 left-1/2 w-[60%] h-[60%] bg-white rounded-lg transform -translate-x-1/2 -translate-y-1/2 shadow-lg">
+
+        <button className="rounded-full w-36 h-36 bg-blue-500 self-end mx-auto mb-10" style={{ aspectRatio: '1 / 1' }}>
+
+        </button>
+      </div>
     </div>
   );
 }

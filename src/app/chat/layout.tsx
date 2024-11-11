@@ -126,7 +126,8 @@ export default function ChatLayout({
 
   return (
     <>
-      <canvas ref={canvasRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1000 }} />
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -2000, background: 'linear-gradient(to right, lightblue, lightpink)' }} />
+      <canvas ref={canvasRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -500 }} />
       {children}
     </>
   );
