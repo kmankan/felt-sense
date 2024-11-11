@@ -1,6 +1,14 @@
 // lib/db/queries.ts
 import { prisma } from "@/lib/db/prisma"
-import { Prisma, User, Conversation, Message, UsageMetrics } from '@prisma/client'
+import { User, Conversation, Message, UsageMetrics } from '@prisma/client'
+
+// Example usage
+// await userQueries.getUserWithLatestConversation('clerk_123')
+// await userQueries.createUser('clerk_123', 'test@example.com')
+// await conversationQueries.createConversation(
+//   userId,
+//   `{message}`
+// )
 
 // Types for return values including relations
 type UserWithConversation = User & {
