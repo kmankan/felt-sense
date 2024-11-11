@@ -1,3 +1,11 @@
+<<<<<<< HEAD
+import React from "react";
+export default function Home() {
+
+  return (
+    <div>
+      <h1>Felt Sense</h1>
+=======
 import Image from "next/image";
 
 export default function Home() {
@@ -96,6 +104,7 @@ export default function Home() {
           Go to nextjs.org →
         </a>
       </footer>
+>>>>>>> main
     </div>
   );
 }

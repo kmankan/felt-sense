@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@deepgram/sdk": "^3.9.0",
+    "@picovoice/orca-node": "^1.0.0",
+    "node-microphone": "^0.1.6",
     "@prisma/client": "^5.22.0",
     "axios": "^1.7.7",
     "next": "15.0.3",
@@ -16,6 +19,7 @@
     "react-dom": "19.0.0-rc-66855b96-20241106"
   },
   "devDependencies": {
+    "@types/node-microphone": "^0.1.4",
     "@types/node": "^22.9.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18",
