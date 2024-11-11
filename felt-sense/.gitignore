@@ -38,3 +38,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# audio
+*.wav
+*.m4a
+*.mp3
+*.mp4
+*.ogg
+*.webm
