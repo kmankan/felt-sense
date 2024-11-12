@@ -1,5 +1,5 @@
 // lib/db/queries.ts
-import { prisma } from "@/lib/db/prisma"
+import { prisma } from "./prisma"
 import { User, Conversation, Message, UsageMetrics } from '@prisma/client'
 
 // Example usage
