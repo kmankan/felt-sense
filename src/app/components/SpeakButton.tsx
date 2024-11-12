@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { sendAudioStream } from "../client";
 import { useChatStore } from "../store/chat";
-
+import Heart from "./Heart";
 export default function SpeakButton() {
     const [isRecording, setIsRecording] = useState(false);
     const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
@@ -114,9 +114,8 @@ export default function SpeakButton() {
     }, [isRecording]);
 
     return (
-        <div className="flex flex-col gap-4 p-4">
-            <div className="text-gray-500 mb-2 mt-auto mx-auto">{conversationState === "speaking" ? "Speaking..." : conversationState === "thinking" ? "Thinking..." : "Listening..."}</div>
-            {isRecording && <div className="flex gap-2">
+        <div className="flex flex-col gap-4 p-4 mt-auto">
+            {conversationState === "listening" ? <div className="flex gap-2">
                 {volumeLevels.slice(5, 15).map((level, index) => (
                     <div
                         key={index}
@@ -128,17 +127,20 @@ export default function SpeakButton() {
                         }}
                     />
                 ))}
-            </div>}
-            <button
-                onClick={() => isRecording ? stopAudio() : recordAudio()}
-                className={`rounded-full sm:w-24 sm:h-24 w-16 h-16 bg-blue-500 mb-6 hover:bg-blue-600 ${isRecording ? 'animate-pulse' : ''}`}
-                style={{ aspectRatio: '1 / 1' }}
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-arrow-up" style={{ transform: 'scale(0.5)' }}>
-                    <line x1="12" y1="19" x2="12" y2="5"></line>
-                    <polyline points="5 12 12 5 19 12"></polyline>
-                </svg>
-            </button>
+            </div> : <div className="text-gray-500 mb-2 mt-auto mx-auto">{conversationState === "speaking" ? "Speaking..." : conversationState === "thinking" ? "Thinking..." : "Listening..."}</div>
+            }
+            <div className="flex justify-center">
+                <button
+                    onClick={() => isRecording ? stopAudio() : recordAudio()}
+                    className={`rounded-full sm:w-24 sm:h-24 w-16 h-16 bg-blue-500 mb-6 hover:bg-blue-600 ${isRecording ? 'animate-pulse' : ''}`}
+                    style={{ aspectRatio: '1 / 1' }}
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-arrow-up" style={{ transform: 'scale(0.5)' }}>
+                        <line x1="12" y1="19" x2="12" y2="5"></line>
+                        <polyline points="5 12 12 5 19 12"></polyline>
+                    </svg>
+                </button>
+            </div>
             {/* <div>
                 {isRecording ? "Recording..." : "Not recording"}
             </div> */}

@@ -1,6 +1,6 @@
 "use client";
 export default function Heart() {
-    return <>  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" className="mt-auto">
+    return <>  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" className="mt-auto absolute top-16">
         <defs>
             <path id="heartPath" d="M100,170 C100,170 180,110 180,65 C180,20 140,20 100,60 C60,20 20,20 20,65 C20,110 100,170 100,170 Z" />
 
