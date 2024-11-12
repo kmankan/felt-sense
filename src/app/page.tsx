@@ -38,7 +38,6 @@ export default async function Home() {
         </Link>
         <p className="mt-4 text-gray-500">Your first 60 minutes are free</p>
       </div>
-
     </div>
   );
 }

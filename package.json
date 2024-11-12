@@ -10,6 +10,10 @@
   },
   "dependencies": {
     "@deepgram/sdk": "^3.9.0",
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^6.1.6",
+    "@mui/material": "^6.1.6",
     "@picovoice/orca-node": "^1.0.0",
     "@prisma/client": "^5.22.0",
     "@workos-inc/authkit-nextjs": "^0.14.0",
