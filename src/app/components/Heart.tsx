@@ -12,7 +12,7 @@ export default function Heart() {
                 <feTurbulence type="turbulence" baseFrequency="0.008" numOctaves="2" seed="2" result="turbulence">
                     <animate attributeName="seed" from="0" to="100" dur="15s" repeatCount="indefinite" />
                 </feTurbulence>
-                <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="3" xChannelSelector="R" yChannelSelector="G" />
+                <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="1" xChannelSelector="R" yChannelSelector="G" />
             </filter>
 
             <radialGradient id="heartGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">

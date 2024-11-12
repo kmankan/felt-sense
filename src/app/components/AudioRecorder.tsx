@@ -5,10 +5,24 @@ import { sendAudioStream } from "../client";
 export function AudioRecorder() {
   const [isRecording, setIsRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
+  const [volumeLevels, setVolumeLevels] = useState<number[]>(Array(15).fill(0));
+  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
+  const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
 
   useEffect(() => {
     const initMediaRecorder = async () => {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+      const context = new AudioContext();
+      const analyserNode = context.createAnalyser();
+      analyserNode.fftSize = 32;
+
+      const source = context.createMediaStreamSource(stream);
+      source.connect(analyserNode);
+
+      setAudioContext(context);
+      setAnalyser(analyserNode);
+
       const recorder = new MediaRecorder(stream);
       setMediaRecorder(recorder);
 
@@ -16,13 +30,49 @@ export function AudioRecorder() {
         if (event.data.size > 0) {
           const audioBlob = new Blob([event.data], { type: "audio/wav" });
           const audioStream = audioBlob.stream();
+
           await sendAudioStream(audioStream);
         }
       };
     };
 
     initMediaRecorder();
+
+    return () => {
+      if (audioContext) {
+        audioContext.close();
+      }
+    };
   }, []);
+
+  useEffect(() => {
+    let animationFrameId: number;
+
+    const updateVolumeLevels = () => {
+      if (analyser && isRecording) {
+        const dataArray = new Uint8Array(analyser.frequencyBinCount);
+        analyser.getByteFrequencyData(dataArray);
+
+        const newLevels = Array.from(dataArray)
+          .slice(0, 15)
+          .map(value => value / 255);
+
+        setVolumeLevels(newLevels);
+      }
+      animationFrameId = requestAnimationFrame(updateVolumeLevels);
+    };
+
+    if (isRecording) {
+      updateVolumeLevels();
+    }
+
+    return () => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+    };
+  }, [isRecording, analyser]);
+  console.log(volumeLevels);
 
   const recordAudio = () => {
     console.log("Recording audio");
@@ -59,6 +109,19 @@ export function AudioRecorder() {
       <div>
         {isRecording ? "Recording..." : "Not recording"}
       </div>
+      {isRecording && <div className="flex gap-2">
+        {volumeLevels.slice(5, 15).map((level, index) => (
+          <div
+            key={index}
+            className="bg-gray-300"
+            style={{
+              height: `${level * 100}px`, // Scale the height based on the volume level
+              width: '10px', // Width of each column
+              transition: 'height 0.1s ease-in-out' // Smooth transition for height changes
+            }}
+          />
+        ))}
+      </div>}
     </div>
   );
 }
