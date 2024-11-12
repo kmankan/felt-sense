@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { AuthKitProvider } from '@workos-inc/authkit-nextjs';
+import Link from 'next/link';
 
 import React from "react";
 
@@ -34,17 +35,9 @@ export default function RootLayout({
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between items-center h-16">
                 <div className="flex items-center">
-                  <a href="/" className="text-2xl font-bold">
+                  <Link href="/" className="text-2xl font-bold">
                     Felt Sense
-                  </a>
-                </div>
-                <div className="flex gap-4">
-                  <a
-                    href="/try"
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    Try Now
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
