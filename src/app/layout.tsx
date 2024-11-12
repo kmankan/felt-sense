@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { AuthKitProvider } from '@workos-inc/authkit-nextjs';
 
 import React from "react";
 
@@ -25,17 +26,34 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
-
   return (
-    <>
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-          {children}
-        </body>
-      </html>
-    </>
+    <html lang="en">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <div className="wrapper">
+          <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex justify-between items-center h-16">
+                <div className="flex items-center">
+                  <a href="/" className="text-2xl font-bold">
+                    Felt Sense
+                  </a>
+                </div>
+                <div className="flex gap-4">
+                  <a
+                    href="/try"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    Try Now
+                  </a>
+                </div>
+              </div>
+            </div>
+          </nav>
+          <main className="pt-16">
+            <AuthKitProvider>{children}</AuthKitProvider>
+          </main>
+        </div>
+      </body>
+    </html>
   );
 }
