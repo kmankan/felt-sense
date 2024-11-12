@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { sendAudioStream } from "../client";
 import { useChatStore } from "../store/chat";
-import Heart from "./Heart";
-export default function SpeakButton() {
+
+export default function SpeakArea() {
     const [isRecording, setIsRecording] = useState(false);
     const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
     const [volumeLevels, setVolumeLevels] = useState<number[]>(Array(15).fill(0));
