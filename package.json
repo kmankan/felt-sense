@@ -10,6 +10,10 @@
   },
   "dependencies": {
     "@deepgram/sdk": "^3.9.0",
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^6.1.6",
+    "@mui/material": "^6.1.6",
     "@picovoice/orca-node": "^1.0.0",
     "@prisma/client": "^5.22.0",
     "@workos-inc/authkit-nextjs": "^0.14.0",
@@ -17,7 +21,9 @@
     "next": "15.0.3",
     "node-microphone": "^0.1.6",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-sound-visualizer": "^1.1.1",
+    "zustand": "^5.0.1"
   },
   "devDependencies": {
     "@types/node-microphone": "^0.1.4",
