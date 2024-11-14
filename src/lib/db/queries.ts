@@ -1,6 +1,6 @@
 // lib/db/queries.ts
-import { prisma } from "./prisma"
-import { User, Conversation, Message, UsageMetrics } from '@prisma/client'
+import { prisma } from "./prisma";
+import { User, Conversation, Message, UsageMetrics } from "@prisma/client";
 
 // Example usage
 // await userQueries.getUserWithLatestConversation('clerk_123')
@@ -18,21 +18,26 @@ import { User, Conversation, Message, UsageMetrics } from '@prisma/client'
 // }
 
 type ConversationWithMessages = Conversation & {
-  messages: Message[]
-}
+  messages: Message[];
+};
 
 // User Queries
 export const userQueries = {
+  getUser: async function (clerkUserId: string): Promise<User | null> {
+    console.log("clerkUserId", clerkUserId);
+    return await prisma.user.findUnique({
+      where: { clerkUserId },
+    });
+  },
 
-  createUser: async function(
-    clerkUserId: string
-  ): Promise<User> {
+  createUser: async function (clerkUserId: string): Promise<User> {
+    console.log("creating user", clerkUserId);
     return await prisma.user.create({
       data: {
         clerkUserId,
       },
-    })
-  }
+    });
+  },
 
   // getUserWithLatestConversation: async function(clerkUserId: string): Promise<UserWithConversation | null> {
   //   return await prisma.user.findUnique({
@@ -51,25 +56,32 @@ export const userQueries = {
   //     },
   //   })
   // },
-}
+};
 
 // Conversation Queries
 export const conversationQueries = {
-  getConversation: async function(
+  getConversation: async function (
+    userId: string,
     conversationId: string
   ): Promise<ConversationWithMessages | null> {
-    return await prisma.conversation.findUnique({
+    const conversation = await prisma.conversation.findUnique({
       where: { id: conversationId },
       include: {
+        user: true,
         messages: {
-          orderBy: { createdAt: 'asc' },
+          orderBy: { createdAt: "asc" },
         },
       },
-    })
+    });
+    if (!conversation || conversation.user.clerkUserId !== userId) {
+      console.error("Conversation not found/unauthorized access");
+      return null;
+    }
+    return conversation;
   },
 
-  createConversation: async function(
-    userId: string, 
+  createConversation: async function (
+    userId: string,
     initialMessage: string
   ): Promise<ConversationWithMessages> {
     return await prisma.conversation.create({
@@ -78,27 +90,40 @@ export const conversationQueries = {
         messages: {
           create: {
             content: initialMessage,
-            role: 'USER',
+            role: "USER",
           },
         },
       },
       include: {
         messages: true,
       },
-    })
-  }
-}
+    });
+  },
+};
 
 // Message Queries
 export const messageQueries = {
-
-  addMessage: async function(
+  addMessage: async function (
+    userId: string,
     conversationId: string,
     content: string,
-    role: 'USER' | 'ASSISTANT',
+    role: "USER" | "ASSISTANT",
     sentiment?: string,
     emotions?: string[]
   ): Promise<Message> {
+    const conversation = await prisma.conversation.findUnique({
+      where: { id: conversationId },
+      include: {
+        user: true,
+        messages: {
+          orderBy: { createdAt: "asc" },
+        },
+      },
+    });
+    if (!conversation || conversation.user.clerkUserId !== userId) {
+      console.error("Conversation not found/unauthorized access");
+      return null;
+    }
     const [message] = await prisma.$transaction([
       prisma.message.create({
         data: {
@@ -113,30 +138,29 @@ export const messageQueries = {
         where: { id: conversationId },
         data: { updatedAt: new Date() },
       }),
-    ])
+    ]);
 
-    return message
+    return message;
   },
 
-  getLatestMessages: async function(
-    conversationId: string, 
+  getLatestMessages: async function (
+    conversationId: string,
     take: number = 10
   ): Promise<Message[]> {
     return await prisma.message.findMany({
       where: { conversationId },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
       take,
-    })
+    });
   },
-}
+};
 
 // Analytics Queries
 export const analyticsQueries = {
-
-  trackMessage: async function(userId: string): Promise<UsageMetrics> {
-    const startOfMonth = new Date()
-    startOfMonth.setDate(1)
-    startOfMonth.setHours(0, 0, 0, 0)
+  trackMessage: async function (userId: string): Promise<UsageMetrics> {
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
 
     return await prisma.usageMetrics.upsert({
       where: {
@@ -153,15 +177,14 @@ export const analyticsQueries = {
       update: {
         messageCount: { increment: 1 },
       },
-    })
-  }
-}
+    });
+  },
+};
 
 // Search/Filter Queries
 export const searchQueries = {
-  
-  searchConversations: async function(
-    userId: string, 
+  searchConversations: async function (
+    userId: string,
     searchTerm: string
   ): Promise<ConversationWithMessages[]> {
     return await prisma.conversation.findMany({
@@ -173,7 +196,7 @@ export const searchQueries = {
               some: {
                 content: {
                   contains: searchTerm,
-                  mode: 'insensitive',
+                  mode: "insensitive",
                 },
               },
             },
@@ -181,7 +204,7 @@ export const searchQueries = {
           {
             title: {
               contains: searchTerm,
-              mode: 'insensitive',
+              mode: "insensitive",
             },
           },
         ],
@@ -191,17 +214,17 @@ export const searchQueries = {
           where: {
             content: {
               contains: searchTerm,
-              mode: 'insensitive',
+              mode: "insensitive",
             },
           },
-          orderBy: { createdAt: 'asc' },
+          orderBy: { createdAt: "asc" },
         },
       },
-    })
+    });
   },
 
-  getConversationsByEmotion: async function(
-    userId: string, 
+  getConversationsByEmotion: async function (
+    userId: string,
     emotion: string
   ): Promise<ConversationWithMessages[]> {
     return await prisma.conversation.findMany({
@@ -224,6 +247,6 @@ export const searchQueries = {
           },
         },
       },
-    })
-  }
-}
+    });
+  },
+};

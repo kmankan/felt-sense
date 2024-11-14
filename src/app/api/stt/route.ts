@@ -1,11 +1,55 @@
 import { NextResponse } from "next/server";
+import { conversationQueries, userQueries } from "../../../lib/db/queries";
+import { messageQueries } from "../../../lib/db/queries";
 
 export async function POST(request: Request) {
+  // 1. primsa query to store trascript in Messages table
+
+  // 2. pass this transcript to the LLM
   try {
+    const testUserId = "clz58585858585858585858585858585858";
+    console.log("testUserId", testUserId);
+    const user = await userQueries.getUser(testUserId);
+    console.log("user", user);
+    if (!user) {
+      console.log("creating user");
+      await userQueries.createUser(testUserId);
+    }
+
     const audioBuffer = await request.arrayBuffer();
     const buffer = Buffer.from(audioBuffer);
 
     const result = await transcribeFile(buffer);
+    console.log("result", result);
+
+    const conversationId = request.headers.get("x-conversation-id");
+    console.log("conversationId", conversationId, typeof conversationId);
+
+    if (!conversationId) {
+      console.error("Conversation ID is required");
+      return NextResponse.json(
+        {
+          message: "Conversation ID is required",
+          success: false,
+        },
+        { status: 400 }
+      );
+    }
+    const conversation = await conversationQueries.getConversation(
+      testUserId,
+      conversationId
+    );
+    if (!conversation) {
+      console.error("Conversation not found/unauthorized access");
+      return NextResponse.json(
+        {
+          message: "Conversation not found/unauthorized access",
+          success: false,
+        },
+        { status: 404 }
+      );
+    }
+    await messageQueries.addMessage(testUserId, conversationId, result, "USER");
 
     return NextResponse.json({
       message: "Audio processed successfully",

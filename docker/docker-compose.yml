@@ -1,6 +1,7 @@
 services:
   postgres-1:
     image: postgres:14
+    platform: linux/amd64
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
