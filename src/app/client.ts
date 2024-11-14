@@ -17,6 +17,10 @@ export const sendAudioStream = async (readable: ReadableStream) => {
   const response = await fetch("/api/stt", {
     method: "POST",
     body: blob,
+    headers: {
+      "Content-Type": "audio/webm", // Adjust mime type if needed
+      "x-conversation-id": "123", // Include your metadata here
+    },
   });
   return response.json();
 };
