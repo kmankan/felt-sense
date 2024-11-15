@@ -32,11 +32,11 @@ export const speakText = async (text: string) => {
   });
 
   // Read the entire stream instead of just the first chunk
-  const reader = response.body.getReader();
+
   const chunks = [];
 
   while (true) {
-    const { done, value } = await reader.read();
+    const { done, value } = await response.body.getReader().read();
     if (done) break;
     console.log("pushing chunk");
     chunks.push(value);
