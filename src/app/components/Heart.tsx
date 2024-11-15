@@ -1,8 +1,9 @@
 "use client";
+
 export default function Heart() {
-    return <>  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" className="mt-auto absolute top-16">
+    return <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="mt-auto absolute top-8 w-[200px] h-[200px]">
         <defs>
-            <path id="heartPath" d="M100,170 C100,170 180,110 180,65 C180,20 140,20 100,60 C60,20 20,20 20,65 C20,110 100,170 100,170 Z" />
+            <path id="heartPath" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
 
             <clipPath id="heartClip">
                 <use href="#heartPath" />
@@ -12,7 +13,7 @@ export default function Heart() {
                 <feTurbulence type="turbulence" baseFrequency="0.008" numOctaves="2" seed="2" result="turbulence">
                     <animate attributeName="seed" from="0" to="100" dur="15s" repeatCount="indefinite" />
                 </feTurbulence>
-                <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="1" xChannelSelector="R" yChannelSelector="G" />
+                <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="4" xChannelSelector="R" yChannelSelector="G" />
             </filter>
 
             <radialGradient id="heartGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
@@ -26,9 +27,9 @@ export default function Heart() {
         </defs>
 
         <g clipPath="url(#heartClip)">
-            <use href="#heartPath" fill="url(#heartGradient)" filter="url(#displacementFilter)" />
+            <rect x="0" y="0" width="24" height="24" fill="url(#heartGradient)" filter="url(#displacementFilter)" />
         </g>
 
         <use href="#heartPath" fill="none" stroke="#cc0000" strokeWidth="1" />
-    </svg></>;
+    </svg>;
 }

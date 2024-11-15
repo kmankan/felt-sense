@@ -2,39 +2,24 @@
 import { prisma } from "./prisma";
 import { User, Conversation, Message, UsageMetrics } from "@prisma/client";
 
-// Example usage
-// await userQueries.getUserWithLatestConversation('clerk_123')
-// await userQueries.createUser('clerk_123', 'test@example.com')
-// await conversationQueries.createConversation(
-//   userId,
-//   `{message}`
-// )
-
-// Types for return values including relations
-// type UserWithConversation = User & {
-//   conversations: (Conversation & {
-//     messages: Message[]
-//   })[]
-// }
-
 type ConversationWithMessages = Conversation & {
   messages: Message[];
 };
 
 // User Queries
 export const userQueries = {
-  getUser: async function (clerkUserId: string): Promise<User | null> {
-    console.log("clerkUserId", clerkUserId);
+  getUser: async function (userId: string): Promise<User | null> {
+    console.log("UserId", userId);
     return await prisma.user.findUnique({
-      where: { clerkUserId },
+      where: { userId },
     });
   },
 
-  createUser: async function (clerkUserId: string): Promise<User> {
-    console.log("creating user", clerkUserId);
+  createUser: async function (userId: string): Promise<User> {
+    console.log("creating user", userId);
     return await prisma.user.create({
       data: {
-        clerkUserId,
+        userId,
       },
     });
   },
@@ -73,7 +58,7 @@ export const conversationQueries = {
         },
       },
     });
-    if (!conversation || conversation.user.clerkUserId !== userId) {
+    if (!conversation || conversation.user.userId !== userId) {
       console.error("Conversation not found/unauthorized access");
       return null;
     }
@@ -81,23 +66,17 @@ export const conversationQueries = {
   },
 
   createConversation: async function (
-    userId: string,
-    initialMessage: string
+    userId: string
   ): Promise<ConversationWithMessages> {
-    return await prisma.conversation.create({
+    const conversation = await prisma.conversation.create({
       data: {
         userId,
-        messages: {
-          create: {
-            content: initialMessage,
-            role: "USER",
-          },
-        },
       },
       include: {
         messages: true,
       },
     });
+    return conversation;
   },
 };
 
@@ -120,7 +99,7 @@ export const messageQueries = {
         },
       },
     });
-    if (!conversation || conversation.user.clerkUserId !== userId) {
+    if (!conversation || conversation.user.userId !== userId) {
       console.error("Conversation not found/unauthorized access");
       return null;
     }
