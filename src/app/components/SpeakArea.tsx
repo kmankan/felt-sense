@@ -1,7 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { sendAudioStream } from "../client";
+import { sendAudioStream } from "../../lib/api/SendAudioStream";
 import { useChatStore } from "../store/chat";
+import { conversationQueries } from "../../lib/db/queries";
+import { withAuth } from '@workos-inc/authkit-nextjs';
+import { createNewConversation } from "../../lib/api/newConversation";
 
 // TODO: include conversationId as a parameter in the SpeakArea component
 export default function SpeakArea() {
@@ -10,44 +13,62 @@ export default function SpeakArea() {
     const [volumeLevels, setVolumeLevels] = useState<number[]>(Array(15).fill(0));
     const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
     const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
-    const { conversationState, setConversationState } = useChatStore();
+    const { conversationState, setConversationState, conversationId, setConversationId } = useChatStore();
     const [showModal, setShowModal] = useState(true);
+    const [userId, setUserId] = useState<string | null>(null);
 
     useEffect(() => {
-        const initMediaRecorder = async () => {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
-            const context = new AudioContext();
-            const analyserNode = context.createAnalyser();
-            analyserNode.fftSize = 32;
-
-            const source = context.createMediaStreamSource(stream);
-            source.connect(analyserNode);
-
-            setAudioContext(context);
-            setAnalyser(analyserNode);
-
-            const recorder = new MediaRecorder(stream);
-            setMediaRecorder(recorder);
-
-            recorder.ondataavailable = async (event) => {
-                if (event.data.size > 0) {
-                    const audioBlob = new Blob([event.data], { type: "audio/wav" });
-                    const audioStream = audioBlob.stream();
-
-                    await sendAudioStream(audioStream);
-                }
-            };
+        const fetchUser = async () => {
+            const { user } = await withAuth();
+            console.log("Auth user:", user);
+            if (!user) {
+                throw new Error("User not found");
+            }
+            setUserId(user.id);
         };
 
-        initMediaRecorder();
+        fetchUser();
+    }, []);
+
+    useEffect(() => {
+        // Only initialize if conversationId and userId exists
+        if (conversationId && userId) {
+            const initMediaRecorder = async () => {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+                const context = new AudioContext();
+                const analyserNode = context.createAnalyser();
+                analyserNode.fftSize = 32;
+
+                const source = context.createMediaStreamSource(stream);
+                source.connect(analyserNode);
+
+                setAudioContext(context);
+                setAnalyser(analyserNode);
+
+                const recorder = new MediaRecorder(stream);
+                setMediaRecorder(recorder);
+
+                recorder.ondataavailable = async (event) => {
+                    if (event.data.size > 0) {  // Removed conversationId check since we know it exists
+                        const audioBlob = new Blob([event.data], { type: "audio/wav" });
+                        const audioStream = audioBlob.stream();
+
+                        await sendAudioStream(audioStream, conversationId, userId);
+                    }
+                };
+            };
+
+            initMediaRecorder();
+            console.log("Media recorder initialized");
+        }
 
         return () => {
             if (audioContext) {
                 audioContext.close();
             }
         };
-    }, []);
+    }, [conversationId]);
 
     /// For audio animation
     useEffect(() => {
@@ -118,21 +139,40 @@ export default function SpeakArea() {
         };
     }, [isRecording]);
 
+    const handleStartSession = async () => {
+        if (!userId) {
+            return;
+        }
+        // create a new conversation
+        console.log("Creating new conversation for user: ", userId);
+
+        const conversation = await createNewConversation(userId);
+
+        setConversationId(conversation.id);
+        console.log("Conversation created with id: ", conversation.id);
+        setShowModal(false);
+    };
+
     return (
         <div className="flex flex-col gap-4 p-4 mt-auto">
             {showModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-25 flex items-center justify-center z-50">
-                    <div className="bg-white/95 backdrop-blur-sm rounded-lg p-8 max-w-sm w-full mx-4 shadow-xl">
-                        <h2 className="text-xl font-semibold mb-4">Welcome</h2>
-                        <p className="text-gray-600 mb-6">Ready to start your conversation?</p>
-                        <button
-                            onClick={() => setShowModal(false)}
-                            className="w-full bg-blue-500 text-white rounded-lg py-2 px-4 hover:bg-blue-600 transition-colors"
-                        >
-                            Start a session
-                        </button>
+                <>
+                    {/* Backdrop */}
+                    <div className="fixed inset-0 bg-black bg-opacity-25 z-50" />
+                    {/* Modal Content */}
+                    <div className="fixed inset-0 flex items-center justify-center z-50">
+                        <div className="bg-white rounded-lg p-8 max-w-sm w-full mx-4 shadow-xl">
+                            <h2 className="text-xl font-semibold mb-4">Welcome</h2>
+                            <p className="text-gray-600 mb-6">Ready to start your conversation?</p>
+                            <button
+                                onClick={handleStartSession}
+                                className="w-full bg-blue-500 text-white rounded-lg py-2 px-4 hover:bg-blue-600 transition-colors"
+                            >
+                                Start a session
+                            </button>
+                        </div>
                     </div>
-                </div>
+                </>
             )}
             {conversationState === "listening" ? <div className="flex gap-2">
                 {volumeLevels.slice(5, 15).map((level, index) => (
