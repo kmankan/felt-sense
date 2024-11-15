@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { sendAudioStream } from "../../lib/api/SendAudioStream";
+import { transcribeAudioStream, speakText } from "../../lib/api/SendAudioStream";
 import { useChatStore } from "../store/chat";
 import { conversationQueries } from "../../lib/db/queries";
 import { withAuth } from '@workos-inc/authkit-nextjs';
@@ -54,7 +54,7 @@ export default function SpeakArea() {
                         const audioBlob = new Blob([event.data], { type: "audio/wav" });
                         const audioStream = audioBlob.stream();
 
-                        await sendAudioStream(audioStream, conversationId, userId);
+                        await transcribeAudioStream(audioStream, conversationId, userId);
                     }
                 };
             };
@@ -98,7 +98,7 @@ export default function SpeakArea() {
             }
         };
     }, [isRecording, analyser]);
-    console.log(volumeLevels);
+    // console.log(volumeLevels);
 
     const recordAudio = () => {
         console.log("Recording audio");
@@ -118,6 +118,8 @@ export default function SpeakArea() {
             console.log("Audio stopped");
             setConversationState("thinking");
         }
+        speakText("what's up, how's it going?");
+
     };
 
     // For space bar recording  
