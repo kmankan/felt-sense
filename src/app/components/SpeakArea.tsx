@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { sendAudioStream } from "../client";
 import { useChatStore } from "../store/chat";
 
+// TODO: include conversationId as a parameter in the SpeakArea component
 export default function SpeakArea() {
     const [isRecording, setIsRecording] = useState(false);
     const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
@@ -10,6 +11,7 @@ export default function SpeakArea() {
     const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
     const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
     const { conversationState, setConversationState } = useChatStore();
+    const [showModal, setShowModal] = useState(true);
 
     useEffect(() => {
         const initMediaRecorder = async () => {
@@ -47,6 +49,7 @@ export default function SpeakArea() {
         };
     }, []);
 
+    /// For audio animation
     useEffect(() => {
         let animationFrameId: number;
 
@@ -95,6 +98,8 @@ export default function SpeakArea() {
             setConversationState("thinking");
         }
     };
+
+    // For space bar recording  
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.code === "Space") {
@@ -115,6 +120,20 @@ export default function SpeakArea() {
 
     return (
         <div className="flex flex-col gap-4 p-4 mt-auto">
+            {showModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-25 flex items-center justify-center z-50">
+                    <div className="bg-white/95 backdrop-blur-sm rounded-lg p-8 max-w-sm w-full mx-4 shadow-xl">
+                        <h2 className="text-xl font-semibold mb-4">Welcome</h2>
+                        <p className="text-gray-600 mb-6">Ready to start your conversation?</p>
+                        <button
+                            onClick={() => setShowModal(false)}
+                            className="w-full bg-blue-500 text-white rounded-lg py-2 px-4 hover:bg-blue-600 transition-colors"
+                        >
+                            Start a session
+                        </button>
+                    </div>
+                </div>
+            )}
             {conversationState === "listening" ? <div className="flex gap-2">
                 {volumeLevels.slice(5, 15).map((level, index) => (
                     <div

@@ -111,7 +111,7 @@ export default function ChatLayout({
         resize();
 
         function render(time) {
-          gl.uniform1f(timeLocation, time / 1000);
+          gl.uniform1f(timeLocation, time / 1000); // ! Look into this: WebGL INVALID_OPERATION: uniform1f: location is not from the associated program
           gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
           requestAnimationFrame(render);
         }

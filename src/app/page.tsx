@@ -1,26 +1,7 @@
 import React from "react";
 import Link from 'next/link';
-import { getSignInUrl, getSignUpUrl, withAuth, signOut } from '@workos-inc/authkit-nextjs';
 
 export default async function Home() {
-  // // Retrieves the user from the session or returns `null` if no user is signed in
-  // const { user } = await withAuth();
-
-  // if (!user) {
-  //   // Get the URL to redirect the user to AuthKit to sign in
-  //   const signInUrl = await getSignInUrl();
-
-  //   // Get the URL to redirect the user to AuthKit to sign up
-  //   const signUpUrl = await getSignUpUrl();
-
-  //   return (
-  //     <div className="wrapper flex flex-col items-center justify-center min-h-screen text-center px-4">
-  //       <Link href={signInUrl}>Log in</Link>
-  //       <Link href={signUpUrl}>Sign Up</Link>
-  //     </div>
-  //   );
-  // }
-
 
   return (
     <div className="wrapper">
