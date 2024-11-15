@@ -8,7 +8,7 @@ export async function POST(request: Request) {
         
         // Try to find existing user
         let user = await userQueries.getUser(userId);
-        console.log("User:", user);
+        console.log("Existing User:", user);
         
         // If user doesn't exist, create new user
         if (!user) {

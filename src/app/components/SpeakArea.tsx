@@ -17,63 +17,57 @@ export default function SpeakArea() {
     const [userId, setUserId] = useState<string | null>(null);
 
     useEffect(() => {
-        const fetchOrCreateUser = async () => {
+        const fetchUser = async () => {
             const { user } = await withAuth();
             console.log("Auth user:", user);
             if (!user) {
                 throw new Error("User not found");
             }
             setUserId(user.id);
-
-            // Check if user exists in database and create if not
-            const response = await fetch('/api/init-user', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: user.id })
-            });
-
-            const dbUser = await response.json();
-            console.log("DB user:", dbUser);
         };
 
-        fetchOrCreateUser();
+        fetchUser();
     }, []);
 
     useEffect(() => {
-        const initMediaRecorder = async () => {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        // Only initialize if conversationId and userId exists
+        if (conversationId && userId) {
+            const initMediaRecorder = async () => {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-            const context = new AudioContext();
-            const analyserNode = context.createAnalyser();
-            analyserNode.fftSize = 32;
+                const context = new AudioContext();
+                const analyserNode = context.createAnalyser();
+                analyserNode.fftSize = 32;
 
-            const source = context.createMediaStreamSource(stream);
-            source.connect(analyserNode);
+                const source = context.createMediaStreamSource(stream);
+                source.connect(analyserNode);
 
-            setAudioContext(context);
-            setAnalyser(analyserNode);
+                setAudioContext(context);
+                setAnalyser(analyserNode);
 
-            const recorder = new MediaRecorder(stream);
-            setMediaRecorder(recorder);
+                const recorder = new MediaRecorder(stream);
+                setMediaRecorder(recorder);
 
-            recorder.ondataavailable = async (event) => {
-                if (event.data.size > 0) {
-                    const audioBlob = new Blob([event.data], { type: "audio/wav" });
-                    const audioStream = audioBlob.stream();
+                recorder.ondataavailable = async (event) => {
+                    if (event.data.size > 0) {  // Removed conversationId check since we know it exists
+                        const audioBlob = new Blob([event.data], { type: "audio/wav" });
+                        const audioStream = audioBlob.stream();
 
-                    await sendAudioStream(audioStream);
-                }
+                        await sendAudioStream(audioStream, conversationId, userId);
+                    }
+                };
             };
-        };
 
-        initMediaRecorder();
+            initMediaRecorder();
+            console.log("Media recorder initialized");
+        }
 
         return () => {
             if (audioContext) {
                 audioContext.close();
             }
         };
-    }, []);
+    }, [conversationId]);
 
     /// For audio animation
     useEffect(() => {

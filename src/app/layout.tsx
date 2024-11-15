@@ -31,7 +31,6 @@ export default function RootLayout({
           accentColor="purple"  // Changes the primary interactive color
           grayColor="slate"     // Changes the neutral color palette
           radius="medium"       // Changes border radius
-          appearance="light"
         >
           <div className="wrapper">
             <nav className="fixed top-0 left-0 right-0 z-50 bg-purple-950 border-b border-gray-100">
