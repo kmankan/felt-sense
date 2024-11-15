@@ -7,6 +7,7 @@ const anthropic = new Anthropic({
 
 export async function POST(request: Request) {
   // TODO: Have this take a conversation ID, obtain the conversation history, and then pass it to the LLM
+  // add new messsage to database
   try {
     const { message } = await request.json();
 
