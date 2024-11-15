@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { sendAudioStream } from "../client";
+import { transcribeAudioStream, speakText } from "../client";
 import { useChatStore } from "../store/chat";
 
 // TODO: include conversationId as a parameter in the SpeakArea component
@@ -35,7 +35,7 @@ export default function SpeakArea() {
                     const audioBlob = new Blob([event.data], { type: "audio/wav" });
                     const audioStream = audioBlob.stream();
 
-                    await sendAudioStream(audioStream);
+                    await transcribeAudioStream(audioStream);
                 }
             };
         };
@@ -77,7 +77,7 @@ export default function SpeakArea() {
             }
         };
     }, [isRecording, analyser]);
-    console.log(volumeLevels);
+    // console.log(volumeLevels);
 
     const recordAudio = () => {
         console.log("Recording audio");
@@ -97,6 +97,8 @@ export default function SpeakArea() {
             console.log("Audio stopped");
             setConversationState("thinking");
         }
+        speakText("what's up, how's it going?");
+
     };
 
     // For space bar recording  
