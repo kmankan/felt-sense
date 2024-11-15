@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { messageQueries } from "../../../lib/db/queries";
 import { transcribeFile } from "../../../lib/utils/transcribeFile";
-import { generateLLMResponse } from "../../../lib/utils/llm";
+import { generateLLMResponse } from "../../../lib/utils/LLM";
 
 export async function POST(request: Request) {
 
