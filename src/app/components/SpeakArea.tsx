@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { sendAudioStream } from "../client";
 import { useChatStore } from "../store/chat";
+import { conversationQueries } from "../../lib/db/queries";
+import { withAuth } from '@workos-inc/authkit-nextjs';
 
 // TODO: include conversationId as a parameter in the SpeakArea component
 export default function SpeakArea() {
@@ -10,8 +12,32 @@ export default function SpeakArea() {
     const [volumeLevels, setVolumeLevels] = useState<number[]>(Array(15).fill(0));
     const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
     const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
-    const { conversationState, setConversationState } = useChatStore();
+    const { conversationState, setConversationState, conversationId, setConversationId } = useChatStore();
     const [showModal, setShowModal] = useState(true);
+    const [userId, setUserId] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchOrCreateUser = async () => {
+            const { user } = await withAuth();
+            console.log("Auth user:", user);
+            if (!user) {
+                throw new Error("User not found");
+            }
+            setUserId(user.id);
+
+            // Check if user exists in database and create if not
+            const response = await fetch('/api/init-user', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: user.id })
+            });
+
+            const dbUser = await response.json();
+            console.log("DB user:", dbUser);
+        };
+
+        fetchOrCreateUser();
+    }, []);
 
     useEffect(() => {
         const initMediaRecorder = async () => {
@@ -118,21 +144,49 @@ export default function SpeakArea() {
         };
     }, [isRecording]);
 
+    const handleStartSession = async () => {
+        if (!userId) {
+            return;
+        }
+        // create a new conversation
+        console.log("Creating new conversation for user: ", userId);
+
+        fetch("/api/create-new-conversation", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ userId }),
+        }).then(async (res) => {
+            const conversation = await res.json();
+            console.log(conversation);
+
+            setConversationId(conversation.id);
+            console.log("Conversation created with id: ", conversation.id);
+            setShowModal(false);
+        });
+    }
+
     return (
         <div className="flex flex-col gap-4 p-4 mt-auto">
             {showModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-25 flex items-center justify-center z-50">
-                    <div className="bg-white/95 backdrop-blur-sm rounded-lg p-8 max-w-sm w-full mx-4 shadow-xl">
-                        <h2 className="text-xl font-semibold mb-4">Welcome</h2>
-                        <p className="text-gray-600 mb-6">Ready to start your conversation?</p>
-                        <button
-                            onClick={() => setShowModal(false)}
-                            className="w-full bg-blue-500 text-white rounded-lg py-2 px-4 hover:bg-blue-600 transition-colors"
-                        >
-                            Start a session
-                        </button>
+                <>
+                    {/* Backdrop */}
+                    <div className="fixed inset-0 bg-black bg-opacity-25 z-50" />
+                    {/* Modal Content */}
+                    <div className="fixed inset-0 flex items-center justify-center z-50">
+                        <div className="bg-white rounded-lg p-8 max-w-sm w-full mx-4 shadow-xl">
+                            <h2 className="text-xl font-semibold mb-4">Welcome</h2>
+                            <p className="text-gray-600 mb-6">Ready to start your conversation?</p>
+                            <button
+                                onClick={handleStartSession}
+                                className="w-full bg-blue-500 text-white rounded-lg py-2 px-4 hover:bg-blue-600 transition-colors"
+                            >
+                                Start a session
+                            </button>
+                        </div>
                     </div>
-                </div>
+                </>
             )}
             {conversationState === "listening" ? <div className="flex gap-2">
                 {volumeLevels.slice(5, 15).map((level, index) => (
