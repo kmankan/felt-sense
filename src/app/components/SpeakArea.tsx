@@ -1,9 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { sendAudioStream } from "../client";
+import { sendAudioStream } from "../../lib/api/SendAudioStream";
 import { useChatStore } from "../store/chat";
 import { conversationQueries } from "../../lib/db/queries";
 import { withAuth } from '@workos-inc/authkit-nextjs';
+import { createNewConversation } from "../../lib/api/newConversation";
 
 // TODO: include conversationId as a parameter in the SpeakArea component
 export default function SpeakArea() {
@@ -145,21 +146,12 @@ export default function SpeakArea() {
         // create a new conversation
         console.log("Creating new conversation for user: ", userId);
 
-        fetch("/api/create-new-conversation", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ userId }),
-        }).then(async (res) => {
-            const conversation = await res.json();
-            console.log(conversation);
+        const conversation = await createNewConversation(userId);
 
-            setConversationId(conversation.id);
-            console.log("Conversation created with id: ", conversation.id);
-            setShowModal(false);
-        });
-    }
+        setConversationId(conversation.id);
+        console.log("Conversation created with id: ", conversation.id);
+        setShowModal(false);
+    };
 
     return (
         <div className="flex flex-col gap-4 p-4 mt-auto">

@@ -20,6 +20,7 @@ export async function POST(request: Request) {
     const buffer = Buffer.from(audioBuffer);
 
     // transcribe the audio buffer
+    // ? Would it be better to make this a utility function that returns the transcript and also calls the LLM
     const result = await transcribeFile(buffer);
     console.log("result", result);
 
@@ -50,6 +51,7 @@ export async function POST(request: Request) {
     // * 2. pass this transcript to the LLM
     const llmResponse = await generateLLMResponse(result);
     console.log("llmResponse", llmResponse);
+    // ? This still needs to be written to the database
     // ! ##
 
     return NextResponse.json({

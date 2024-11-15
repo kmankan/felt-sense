@@ -1,5 +1,4 @@
 "use client";
-import axios from "axios";
 
 export const sendAudioStream = async (
   readable: ReadableStream, 
