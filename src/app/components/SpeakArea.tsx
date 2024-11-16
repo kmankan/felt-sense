@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import React, { useState, useEffect } from "react";
 import { transcribeAudioStream, speakText, callLLM } from "@/lib/api/SendAudioStream";
@@ -30,8 +31,8 @@ export default function SpeakArea() {
     }, []);
 
     useEffect(() => {
-        // Only initialize if conversationId and userId exists
-        if (conversationId && userId) {
+        // Only initialize if conversationId
+        if (conversationId) {
             const initMediaRecorder = async () => {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
@@ -53,7 +54,7 @@ export default function SpeakArea() {
                         const audioBlob = new Blob([event.data], { type: "audio/wav" });
                         const audioStream = audioBlob.stream();
 
-                        await transcribeAudioStream(audioStream, conversationId, userId);
+                        await transcribeAudioStream(audioStream, conversationId);
                         const response = await callLLM(conversationId);
                         speakText(response.response);
                         console.log("response", response);
