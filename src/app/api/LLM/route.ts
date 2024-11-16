@@ -6,10 +6,11 @@ import { getSession } from "@workos-inc/authkit-nextjs";
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
-
+console.log("anthropic api key", process.env.ANTHROPIC_API_KEY);
 export async function POST(request: Request) {
   // TODO: Have this take a conversation ID, obtain the conversation history, and then pass it to the LLM
   // add new messsage to database
+  console.log("anthropic api key", process.env.ANTHROPIC_API_KEY);
 
   try {
     const session = await getSession();
@@ -42,9 +43,9 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-
+    console.log("claude-3-5-sonnet-20241022");
     const response = await anthropic.messages.create({
-      model: "claude-3-sonnet-20240229",
+      model: "claude-3-5-sonnet-20241022",
       max_tokens: 1000,
       system:
         "You are a compassionate AI voice therapist and coach. Your role is to help the user navigate their emotional landscape and talk through any difficulties they are experiencing. Listen attentively, ask clarifying questions, validate their feelings, and offer gentle guidance and coping strategies. Maintain a warm, non-judgmental tone. Your goal is to provide a safe, supportive space for the user to process their thoughts and emotions. Keep your responses to three sentences or less.",

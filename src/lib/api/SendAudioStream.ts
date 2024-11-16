@@ -1,7 +1,7 @@
 "use client";
 
 export const transcribeAudioStream = async (
-  readable: ReadableStream, 
+  readable: ReadableStream,
   conversationId: string,
   userId: string
 ) => {
@@ -23,8 +23,15 @@ export const transcribeAudioStream = async (
     headers: {
       "Content-Type": "audio/webm", // Adjust mime type if needed
       "x-conversation-id": conversationId, // Include your metadata here
-      "x-user-id": userId, // Include your metadata here
     },
+  });
+  return response.json();
+};
+
+export const callLLM = async (conversationId: string) => {
+  const response = await fetch("/api/LLM", {
+    method: "POST",
+    body: JSON.stringify({ conversationId }),
   });
   return response.json();
 };

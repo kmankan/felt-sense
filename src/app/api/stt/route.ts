@@ -1,13 +1,21 @@
 import { NextResponse } from "next/server";
 import { messageQueries } from "../../../lib/db/queries";
 import { transcribeFile } from "../../../lib/utils/transcribeFile";
+import { getSession } from "@workos-inc/authkit-nextjs";
 
 export async function POST(request: Request) {
   // * 1. primsa query to store trascript in Messages table
   try {
     // get the user id from the request headers
-    const userId = request.headers.get("x-user-id");
-    console.log("userId", userId);
+    const session = await getSession();
+    const userId = session?.user?.id;
+    if (!userId) {
+      console.error("User ID is required");
+      return NextResponse.json(
+        { message: "User ID is required", success: false },
+        { status: 400 }
+      );
+    }
 
     // get the conversation id from the request headers
     const conversationId = request.headers.get("x-conversation-id");
@@ -42,6 +50,7 @@ export async function POST(request: Request) {
     }
 
     // add the message to the database
+    console.log("adding message to database", userId, conversationId, result);
     await messageQueries.addMessage(userId, conversationId, result, "user");
 
     return NextResponse.json({
