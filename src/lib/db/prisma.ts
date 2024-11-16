@@ -1,5 +1,4 @@
 // lib/db.ts
-import { Prisma } from '@prisma/client'
 import { PrismaClient } from '@prisma/client'
 // A note on global
 // you can add ANY properties you want to global! 

@@ -1,17 +1,14 @@
 import { NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
-import { conversationQueries, messageQueries } from "@/lib/db/queries";
+import { conversationQueries, messageQueries } from "../../../lib/db/queries";
 import { getSession } from "@workos-inc/authkit-nextjs";
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
-console.log("anthropic api key", process.env.ANTHROPIC_API_KEY);
-export async function POST(request: Request) {
-  // TODO: Have this take a conversation ID, obtain the conversation history, and then pass it to the LLM
-  // add new messsage to database
-  console.log("anthropic api key", process.env.ANTHROPIC_API_KEY);
 
+export async function POST(request: Request) {
+  // add new messsage to database
   try {
     const session = await getSession();
     const userId = session?.user?.id;
@@ -52,16 +49,19 @@ export async function POST(request: Request) {
       messages: filteredMessages,
     });
 
+    // required to check that response is text and not tool_use
+    const responseContent = (response.content[0].type === 'text') ? response.content[0].text : '';
+
     const newMessage = await messageQueries.addMessage(
       userId,
       conversationId,
-      response.content[0].text,
+      responseContent,
       "assistant"
     );
     console.log("newMessage", newMessage);
 
     return NextResponse.json({
-      response: response.content[0].text,
+      response: responseContent,
     });
   } catch (error) {
     console.error("Error:", error);

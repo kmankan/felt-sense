@@ -1,5 +1,5 @@
 // lib/db/queries.ts
-import { prisma } from "./prisma";
+import { prisma } from "@/lib/db/prisma";
 import { User, Conversation, Message, UsageMetrics } from "@prisma/client";
 
 type ConversationWithMessages = Conversation & {
@@ -8,6 +8,7 @@ type ConversationWithMessages = Conversation & {
 
 // User Queries
 export const userQueries = {
+  // Retrieves a user by their userId
   getUser: async function (userId: string): Promise<User | null> {
     console.log("UserId", userId);
     return await prisma.user.findUnique({
@@ -15,6 +16,7 @@ export const userQueries = {
     });
   },
 
+  // Creates a new user with the given userId
   createUser: async function (userId: string): Promise<User> {
     console.log("creating user", userId);
     return await prisma.user.create({
@@ -24,27 +26,11 @@ export const userQueries = {
     });
   },
 
-  // getUserWithLatestConversation: async function(clerkUserId: string): Promise<UserWithConversation | null> {
-  //   return await prisma.user.findUnique({
-  //     where: { clerkUserId },
-  //     include: {
-  //       conversations: {
-  //         orderBy: { createdAt: 'desc' },
-  //         take: 1,
-  //         include: {
-  //           messages: {
-  //             orderBy: { createdAt: 'desc' },
-  //             take: 1,
-  //           },
-  //         },
-  //       },
-  //     },
-  //   })
-  // },
 };
 
 // Conversation Queries
 export const conversationQueries = {
+  // Retrieves a conversation and its messages by id
   getConversation: async function (
     userId: string,
     conversationId: string
@@ -65,6 +51,7 @@ export const conversationQueries = {
     return conversation;
   },
 
+  // Creates a new empty conversation for a user
   createConversation: async function (
     userId: string
   ): Promise<ConversationWithMessages> {
@@ -82,6 +69,7 @@ export const conversationQueries = {
 
 // Message Queries
 export const messageQueries = {
+  // Adds a new message to a conversation
   addMessage: async function (
     userId: string,
     conversationId: string,
@@ -130,6 +118,7 @@ export const messageQueries = {
     return message;
   },
 
+  // Gets the most recent messages from a conversation
   getLatestMessages: async function (
     conversationId: string,
     take: number = 10
@@ -144,6 +133,7 @@ export const messageQueries = {
 
 // Analytics Queries
 export const analyticsQueries = {
+  // Increments message count for user's monthly metrics
   trackMessage: async function (userId: string): Promise<UsageMetrics> {
     const startOfMonth = new Date();
     startOfMonth.setDate(1);
@@ -170,6 +160,7 @@ export const analyticsQueries = {
 
 // Search/Filter Queries
 export const searchQueries = {
+  // Searches conversations by text content
   searchConversations: async function (
     userId: string,
     searchTerm: string
@@ -210,6 +201,7 @@ export const searchQueries = {
     });
   },
 
+  // Filters conversations by emotional content
   getConversationsByEmotion: async function (
     userId: string,
     emotion: string
