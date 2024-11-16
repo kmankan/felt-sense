@@ -1,6 +1,6 @@
 {
   "name": "felt-sense",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
@@ -10,26 +10,16 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.1",
-    "@deepgram/sdk": "^3.9.0",
-    "@emotion/react": "^11.13.3",
-    "@emotion/styled": "^11.13.0",
-    "@mui/icons-material": "^6.1.6",
-    "@mui/material": "^6.1.6",
-    "@picovoice/orca-node": "^1.0.0",
     "@prisma/client": "^5.22.0",
     "@radix-ui/themes": "^3.1.6",
     "@workos-inc/authkit-nextjs": "^0.14.0",
-    "axios": "^1.7.7",
-    "lucide-react": "^0.460.0",
     "next": "15.0.3",
-    "node-microphone": "^0.1.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-sound-visualizer": "^1.1.1",
     "zustand": "^5.0.1"
   },
   "devDependencies": {
-    "@types/node-microphone": "^0.1.4",
     "@types/node": "^22.9.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18",
