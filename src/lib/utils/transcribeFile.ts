@@ -1,6 +1,4 @@
 export const transcribeFile = async (audioFile: Buffer): Promise<string> => {
-  console.log("here");
-  console.log("transcribing file");
 
   const response = await fetch("https://api.deepgram.com/v1/listen", {
     method: "POST",

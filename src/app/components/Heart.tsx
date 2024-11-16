@@ -1,5 +1,3 @@
-"use client";
-
 export default function Heart() {
     return <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="mt-auto absolute top-8 w-[200px] h-[200px]">
         <defs>
