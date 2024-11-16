@@ -1,11 +1,10 @@
 "use client";
 
 export const transcribeAudioStream = async (
-  readable: ReadableStream,
-  conversationId: string,
-  userId: string
-) => {
   // Convert ReadableStream to Blob
+  readable: ReadableStream,
+  conversationId: string
+) => {
   const reader = readable.getReader();
   const chunks = [];
 
