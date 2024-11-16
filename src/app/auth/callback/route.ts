@@ -1,6 +1,6 @@
 import { handleAuth } from '@workos-inc/authkit-nextjs';
 import { NextRequest } from 'next/server';
-import { userQueries } from '../../../lib/db/queries';
+import { userQueries } from '@/lib/db/queries';
 import { getSession } from '@workos-inc/authkit-nextjs';
 
 export interface HandleAuthOptions {

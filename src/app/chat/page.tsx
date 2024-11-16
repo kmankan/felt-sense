@@ -1,6 +1,6 @@
 import { withAuth } from '@workos-inc/authkit-nextjs';
-import Heart from "../components/Heart";
-import SpeakArea from "../components/SpeakArea";
+import Heart from "@/app/components/Heart";
+import SpeakArea from "@/app/components/SpeakArea";
 
 const DisplayMessages = () => {
   return (

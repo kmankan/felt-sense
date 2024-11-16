@@ -1,5 +1,5 @@
 "use client";
-import { useChatStore } from '../store/chat';
+import { useChatStore } from '@/app/store/chat';
 
 export default function ShowConversationState() {
     const conversationState = useChatStore((state) => state.conversationState);

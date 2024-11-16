@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
-import { conversationQueries, messageQueries } from "../../../lib/db/queries";
+import { conversationQueries, messageQueries } from "@/lib/db/queries";
 import { getSession } from "@workos-inc/authkit-nextjs";
 
 const anthropic = new Anthropic({
