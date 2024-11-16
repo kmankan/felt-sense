@@ -1,9 +1,6 @@
 "use client";
 import React, { useRef, useEffect } from "react";
 
-
-
-
 export default function ChatLayout({
   children,
 }: Readonly<{
@@ -16,18 +13,19 @@ export default function ChatLayout({
     if (canvas) {
       console.log("canvas", canvas);
       const gl = canvas.getContext("webgl");
-      if (gl) {
-        const canvas = canvasRef.current;
-        const gl = canvas.getContext('webgl');
+      if (gl === null) {
+        console.error("WebGL not supported");
+        return;
+      }
 
-        const vertexShader = `
+      const vertexShader = `
       attribute vec2 position;
       void main() {
         gl_Position = vec4(position, 0.0, 1.0);
       }
     `;
 
-        const fragmentShader = `
+      const fragmentShader = `
       precision mediump float;
       uniform float time;
       uniform vec2 resolution;
@@ -75,52 +73,59 @@ export default function ChatLayout({
       }
     `;
 
-        function createShader(gl, type, source) {
-          const shader = gl.createShader(type);
-          gl.shaderSource(shader, source);
-          gl.compileShader(shader);
-          return shader;
-        }
-
-        const program = gl.createProgram();
-        gl.attachShader(program, createShader(gl, gl.VERTEX_SHADER, vertexShader));
-        gl.attachShader(program, createShader(gl, gl.FRAGMENT_SHADER, fragmentShader));
-        gl.linkProgram(program);
-        gl.useProgram(program);
-
-        const vertices = new Float32Array([-1, -1, -1, 1, 1, -1, 1, 1]);
-        const buffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-
-        const positionLocation = gl.getAttribLocation(program, 'position');
-        gl.enableVertexAttribArray(positionLocation);
-        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
-
-        const timeLocation = gl.getUniformLocation(program, 'time');
-        const resolutionLocation = gl.getUniformLocation(program, 'resolution');
-
-        function resize() {
-          canvas.width = window.innerWidth;
-          canvas.height = window.innerHeight;
-          gl.viewport(0, 0, canvas.width, canvas.height);
-          gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
-        }
-
-        window.addEventListener('resize', resize);
-        resize();
-
-        function render(time) {
-          gl.uniform1f(timeLocation, time / 1000); // ! Look into this: WebGL INVALID_OPERATION: uniform1f: location is not from the associated program
-          gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-          requestAnimationFrame(render);
-        }
-
-        requestAnimationFrame(render);
-        // Initialize your WebGL shader here
-        // Example: gl.clearColor(0.0, 0.0, 0.0, 1.0);
-        // gl.clear(gl.COLOR_BUFFER_BIT);
+      function createShader(gl: WebGLRenderingContext, type: number, source: string) {
+        const shader = gl.createShader(type);
+        if (!shader) throw new Error('Failed to create shader');
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        return shader;
       }
+
+      const program = gl.createProgram();
+      if (!program) throw new Error('Failed to create program');
+
+      gl.attachShader(program, createShader(gl, gl.VERTEX_SHADER, vertexShader));
+      gl.attachShader(program, createShader(gl, gl.FRAGMENT_SHADER, fragmentShader));
+      gl.linkProgram(program);
+      gl.useProgram(program);
+
+      const vertices = new Float32Array([-1, -1, -1, 1, 1, -1, 1, 1]);
+      const buffer = gl.createBuffer();
+      if (!buffer) throw new Error('Failed to create buffer');
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+      const positionLocation = gl.getAttribLocation(program, 'position');
+      gl.enableVertexAttribArray(positionLocation);
+      gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+      const timeLocation = gl.getUniformLocation(program, 'time');
+      const resolutionLocation = gl.getUniformLocation(program, 'resolution');
+      if (!timeLocation || !resolutionLocation) throw new Error('Failed to get uniform locations');
+
+      function resize() {
+        if (!canvas || !resolutionLocation || !gl) return;
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
+      }
+
+      window.addEventListener('resize', resize);
+      resize();
+
+      function render(time: number) {
+        if (!gl || !timeLocation) return;
+        gl.uniform1f(timeLocation, time / 1000);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        requestAnimationFrame(render);
+      }
+
+      requestAnimationFrame(render);
+      // Initialize your WebGL shader here
+      // Example: gl.clearColor(0.0, 0.0, 0.0, 1.0);
+      // gl.clear(gl.COLOR_BUFFER_BIT);
     }
   }, []);
 

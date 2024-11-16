@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { transcribeAudioStream, speakText, callLLM } from "../../lib/api/SendAudioStream";
 import { useChatStore } from "../store/chat";
-import { conversationQueries } from "../../lib/db/queries";
 import { withAuth } from '@workos-inc/authkit-nextjs';
 import { createNewConversation } from "../../lib/api/newConversation";
 
