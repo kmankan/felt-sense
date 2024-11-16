@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { transcribeAudioStream, speakText } from "../../lib/api/SendAudioStream";
+import { transcribeAudioStream, speakText, callLLM } from "../../lib/api/SendAudioStream";
 import { useChatStore } from "../store/chat";
 import { conversationQueries } from "../../lib/db/queries";
 import { withAuth } from '@workos-inc/authkit-nextjs';
@@ -55,6 +55,9 @@ export default function SpeakArea() {
                         const audioStream = audioBlob.stream();
 
                         await transcribeAudioStream(audioStream, conversationId, userId);
+                        const response = await callLLM(conversationId);
+                        speakText(response.response);
+                        console.log("response", response);
                     }
                 };
             };
@@ -118,7 +121,7 @@ export default function SpeakArea() {
             console.log("Audio stopped");
             setConversationState("thinking");
         }
-        speakText("what's up, how's it going?");
+        // speakText("what's up, how's it going?");
 
     };
 

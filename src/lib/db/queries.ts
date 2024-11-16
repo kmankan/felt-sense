@@ -86,7 +86,7 @@ export const messageQueries = {
     userId: string,
     conversationId: string,
     content: string,
-    role: "USER" | "ASSISTANT",
+    role: "user" | "assistant",
     sentiment?: string,
     emotions?: string[]
   ): Promise<Message> {
@@ -103,6 +103,14 @@ export const messageQueries = {
       console.error("Conversation not found/unauthorized access");
       return null;
     }
+    console.log(
+      "adding message to database",
+      conversationId,
+      "content",
+      content,
+      "role",
+      role
+    );
     const [message] = await prisma.$transaction([
       prisma.message.create({
         data: {
