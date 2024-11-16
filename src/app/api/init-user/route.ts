@@ -1,10 +1,14 @@
 import { NextResponse } from 'next/server';
 import { userQueries } from '../../../lib/db/queries';
+import { getSession } from '@workos-inc/authkit-nextjs';
 
 export async function POST(request: Request) {
     try {
         const { userId } = await request.json();
-        console.log("User ID:", userId);
+
+        if (!userId) {
+            return NextResponse.json({ error: 'User ID not found' }, { status: 401 });
+        }
         
         // Try to find existing user
         let user = await userQueries.getUser(userId);
