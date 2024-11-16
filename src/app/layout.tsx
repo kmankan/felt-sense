@@ -4,7 +4,7 @@ import '@radix-ui/themes/styles.css';
 import { AuthKitProvider } from '@workos-inc/authkit-nextjs';
 import Link from 'next/link';
 import React from "react";
-import { SignInButton } from './components/SignInButton';
+import { SignInButton } from '@/app/components/SignInButton';
 import { Theme } from '@radix-ui/themes';
 
 const geistSans = localFont({

@@ -1,9 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { transcribeAudioStream, speakText, callLLM } from "../../lib/api/SendAudioStream";
-import { useChatStore } from "../store/chat";
+import { transcribeAudioStream, speakText, callLLM } from "@/lib/api/SendAudioStream";
+import { useChatStore } from "@/app/store/chat";
 import { withAuth } from '@workos-inc/authkit-nextjs';
-import { createNewConversation } from "../../lib/api/newConversation";
+import { createNewConversation } from "@/lib/api/newConversation";
 
 // TODO: include conversationId as a parameter in the SpeakArea component
 export default function SpeakArea() {

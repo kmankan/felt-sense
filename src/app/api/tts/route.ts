@@ -1,4 +1,4 @@
-import { speak } from "../../../lib/utils/generateSpeech";
+import { speak } from "@/lib/utils/generateSpeech";
 
 export async function POST(request: Request) {
   const { text } = await request.json();

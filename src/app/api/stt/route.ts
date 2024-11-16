@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { messageQueries } from "../../../lib/db/queries";
-import { transcribeFile } from "../../../lib/utils/transcribeFile";
+import { messageQueries } from "@/lib/db/queries";
+import { transcribeFile } from "@/lib/utils/transcribeFile";
 import { getSession } from "@workos-inc/authkit-nextjs";
 
 export async function POST(request: Request) {
