@@ -86,7 +86,7 @@ export const messageQueries = {
     userId: string,
     conversationId: string,
     content: string,
-    role: "USER" | "ASSISTANT",
+    role: "user" | "assistant",
     sentiment?: string,
     emotions?: string[]
   ): Promise<Message> {

@@ -48,8 +48,8 @@ model Message {
 }
 
 enum MessageRole {
-  USER // Messages from the human user
-  ASSISTANT // Messages from the AI assistant
+  user // Messages from the human user
+  assistant // Messages from the AI assistant
 }
 
 // Optional: Keep if you want to track usage metrics

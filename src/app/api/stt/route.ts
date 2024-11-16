@@ -1,17 +1,15 @@
 import { NextResponse } from "next/server";
 import { messageQueries } from "../../../lib/db/queries";
 import { transcribeFile } from "../../../lib/utils/transcribeFile";
-import { generateLLMResponse } from "../../../lib/utils/LLM";
 
 export async function POST(request: Request) {
-
   // * 1. primsa query to store trascript in Messages table
   try {
-    // get the user id from the request headers 
+    // get the user id from the request headers
     const userId = request.headers.get("x-user-id");
     console.log("userId", userId);
 
-    // get the conversation id from the request headers 
+    // get the conversation id from the request headers
     const conversationId = request.headers.get("x-conversation-id");
     console.log("conversationId", conversationId);
 
@@ -23,7 +21,6 @@ export async function POST(request: Request) {
     // ? Would it be better to make this a utility function that returns the transcript and also calls the LLM
     const result = await transcribeFile(buffer);
     console.log("result", result);
-
 
     if (!conversationId) {
       console.error("Conversation ID is required");
@@ -45,14 +42,7 @@ export async function POST(request: Request) {
     }
 
     // add the message to the database
-    await messageQueries.addMessage(userId, conversationId, result, "USER");
-
-    // ! Is this the correct time/place for this?
-    // * 2. pass this transcript to the LLM
-    const llmResponse = await generateLLMResponse(result);
-    console.log("llmResponse", llmResponse);
-    // ? This still needs to be written to the database
-    // ! ##
+    await messageQueries.addMessage(userId, conversationId, result, "user");
 
     return NextResponse.json({
       message: "Audio processed successfully",
@@ -71,7 +61,6 @@ export async function POST(request: Request) {
     );
   }
 }
-
 
 if (!process.env.DEEPGRAM_API_KEY) {
   throw new Error("DEEPGRAM_API_KEY is not set");
