@@ -3,10 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { transcribeAudioStream, speakText, callLLM } from "@/lib/api/SendAudioStream";
 import { useChatStore } from "@/app/store/chat";
-import { withAuth } from '@workos-inc/authkit-nextjs';
 import { createNewConversation } from "@/lib/api/newConversation";
 
-// TODO: include conversationId as a parameter in the SpeakArea component
 export default function SpeakArea() {
     const [isRecording, setIsRecording] = useState(false);
     const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
@@ -15,20 +13,6 @@ export default function SpeakArea() {
     const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
     const { conversationState, setConversationState, conversationId, setConversationId } = useChatStore();
     const [showModal, setShowModal] = useState(true);
-    const [userId, setUserId] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchUser = async () => {
-            const { user } = await withAuth();
-            console.log("Auth user:", user);
-            if (!user) {
-                throw new Error("User not found");
-            }
-            setUserId(user.id);
-        };
-
-        fetchUser();
-    }, []);
 
     useEffect(() => {
         // Only initialize if conversationId
@@ -145,13 +129,10 @@ export default function SpeakArea() {
     }, [isRecording]);
 
     const handleStartSession = async () => {
-        if (!userId) {
-            return;
-        }
         // create a new conversation
         console.log("Creating new conversation for user: ", userId);
 
-        const conversation = await createNewConversation(userId);
+        const conversation = await createNewConversation();
 
         setConversationId(conversation.id);
         console.log("Conversation created with id: ", conversation.id);
