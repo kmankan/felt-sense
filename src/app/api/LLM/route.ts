@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     let userId = session?.user?.id;
     console.log("userId", userId);
 
-    // If initial session check fails, try to refresh
+    // If initial session check fails, try to refresh the token
     if (!userId) {
       console.log("No user ID found, trying to refresh session");
       try {
