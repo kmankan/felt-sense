@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { transcribeAudioStream, speakText, callLLM } from "@/lib/api/SendAudioStream";
 import { useChatStore } from "@/app/store/chat";
 import { createNewConversation } from "@/lib/api/newConversation";
+import { withAuth } from "@workos-inc/authkit-nextjs";
 
 export default function SpeakArea() {
     const [isRecording, setIsRecording] = useState(false);
@@ -13,10 +14,25 @@ export default function SpeakArea() {
     const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
     const { conversationState, setConversationState, conversationId, setConversationId } = useChatStore();
     const [showModal, setShowModal] = useState(true);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    useEffect(() => {
+        const checkAuth = async () => {
+            try {
+                const session = await withAuth({ ensureSignedIn: true });
+                setIsAuthenticated(!!session.user);
+            } catch (error) {
+                console.error("Auth check failed:", error);
+                // Will automatically redirect to sign-in
+            }
+        };
+
+        checkAuth();
+    }, []);
 
     useEffect(() => {
         // Only initialize if conversationId
-        if (conversationId) {
+        if (conversationId && isAuthenticated) {
             const initMediaRecorder = async () => {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
@@ -55,7 +71,7 @@ export default function SpeakArea() {
                 audioContext.close();
             }
         };
-    }, [conversationId]);
+    }, [conversationId, isAuthenticated]);
 
     /// For audio animation
     useEffect(() => {
@@ -130,7 +146,6 @@ export default function SpeakArea() {
 
     const handleStartSession = async () => {
         // create a new conversation
-        console.log("Creating new conversation for user: ", userId);
 
         const conversation = await createNewConversation();
 
