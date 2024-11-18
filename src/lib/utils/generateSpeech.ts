@@ -19,14 +19,14 @@ export async function speak(text: string): Promise<Buffer> {
         model_id: "sonic-english",
         voice: {
           mode: "id",
-          id: "79a125e8-cd45-4c13-8a67-188112f4dd22",
-          _experimental_controls: {
-            speed: "slow",
-            emotion: {
-              positivity: "high",
-              curiosity: "high",
-            },
-          },
+          id: "13524ffb-a918-499a-ae97-c98c7c4408c4",
+          // _experimental_controls: {
+          //   speed: "slow",
+          //   emotion: {
+          //     positivity: "high",
+          //     curiosity: "high",
+          //   },
+          // },
         },
         output_format: {
           container: "wav",
