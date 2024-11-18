@@ -5,7 +5,10 @@ import { getSession } from "@workos-inc/authkit-nextjs";
 const DisplayMessages = () => {
   return (
     <div className="flex flex-col items-center justify-center">
-      DisplayMessages
+      <p>Instructions: </p>
+      <p>Start a session to begin a conversation</p>
+      <p>When you&apos;re ready, click the blue arrow or press SPACEBAR and speak </p>
+      <p>When you&apos;re done speaking, click the blue arrow or SPACEBAR again</p>
     </div>
   )
 };
