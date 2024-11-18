@@ -1,7 +1,7 @@
 "use client";
-import { getSignInUrl, getSignUpUrl, signOut } from "@workos-inc/authkit-nextjs";
 import { Button, DropdownMenu } from "@radix-ui/themes";
 import { getSessionInformation } from "@/app/auth/actions/getSession";
+import { handleSignOut, getAuthUrls } from "@/app/auth/actions/loginActions";
 import type { Session } from "@/types/index";
 import { useEffect, useState } from 'react';
 
@@ -11,9 +11,8 @@ export function SignInButton({ large }: { large?: boolean }) {
 
   useEffect(() => {
     const fetchUrls = async () => {
-      const signInUrl = await getSignInUrl();
-      const signUpUrl = await getSignUpUrl();
-      setUrls({ signInUrl, signUpUrl });
+      const authUrls = await getAuthUrls();
+      setUrls(authUrls);
     };
 
     const fetchSession = async () => {
@@ -51,7 +50,7 @@ export function SignInButton({ large }: { large?: boolean }) {
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
         <DropdownMenu.Item className="hover:bg-neutral-50">
-          <Button onClick={signOut} variant="ghost" size={large ? "3" : "2"}>
+          <Button onClick={handleSignOut} variant="ghost" size={large ? "3" : "2"}>
             Sign Out
           </Button>
         </DropdownMenu.Item>
