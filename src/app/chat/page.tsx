@@ -1,6 +1,6 @@
-import { withAuth } from '@workos-inc/authkit-nextjs';
 import Heart from "@/app/components/Heart";
 import SpeakArea from "@/app/components/SpeakArea";
+import { getSession } from "@workos-inc/authkit-nextjs";
 
 const DisplayMessages = () => {
   return (
@@ -10,9 +10,16 @@ const DisplayMessages = () => {
   )
 };
 
-
 export default async function ChatPage() {
-  const { user } = await withAuth();
+  const session = await getSession();
+  console.log("session", session);
+  const user = session?.user;
+  console.log("user is signed in", user);
+
+  if (!user) {
+    return <div>User is not signed in</div>;
+  }
+
   return (
     <div>
       <div className="flex items-center justify-center m-4">

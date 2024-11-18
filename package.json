@@ -12,7 +12,7 @@
     "@anthropic-ai/sdk": "^0.32.1",
     "@prisma/client": "^5.22.0",
     "@radix-ui/themes": "^3.1.6",
-    "@workos-inc/authkit-nextjs": "^0.14.0",
+    "@workos-inc/authkit-nextjs": "0.15.0",
     "next": "15.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

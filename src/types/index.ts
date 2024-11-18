@@ -1,4 +1,4 @@
-export interface User {
+export type User = {
   object: 'user';
   id: string;
   email: string;
@@ -15,7 +15,7 @@ export interface Impersonator {
   reason: string | null;
 }
 
-export interface UserInfo {
+export type UserInfo = {
   user: User;
   sessionId: string;
   organizationId?: string;
@@ -25,3 +25,12 @@ export interface UserInfo {
   accessToken: string;
 }
 
+export type Session = {
+  user: User | null;
+  sessionId?: string;
+  organizationId?: string;
+  role?: string;
+  permissions?: string[];
+  impersonator?: Impersonator;
+  accessToken?: string;
+}
