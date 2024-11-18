@@ -3,16 +3,30 @@ import { getSignInUrl, getSignUpUrl, signOut } from "@workos-inc/authkit-nextjs"
 import { Button, DropdownMenu } from "@radix-ui/themes";
 import { getSessionInformation } from "@/app/auth/actions/getSession";
 import type { Session } from "@/types/index";
+import { useEffect, useState } from 'react';
 
-export async function SignInButton({ large }: { large?: boolean }) {
+export function SignInButton({ large }: { large?: boolean }) {
+  const [urls, setUrls] = useState({ signInUrl: '', signUpUrl: '' });
+  const [session, setSession] = useState<Session | null>(null);
 
-  const signInUrl = await getSignInUrl();
-  const signUpUrl = await getSignUpUrl();
+  useEffect(() => {
+    const fetchUrls = async () => {
+      const signInUrl = await getSignInUrl();
+      const signUpUrl = await getSignUpUrl();
+      setUrls({ signInUrl, signUpUrl });
+    };
 
-  const session: Session = await getSessionInformation();
+    const fetchSession = async () => {
+      const sessionInfo = await getSessionInformation();
+      console.log("sessionInfo", sessionInfo);
+      setSession(sessionInfo);
+    };
 
-  if (!session.user) {
-    console.log("user is not signed in", session.user);
+    fetchUrls();
+    fetchSession();
+  }, []);
+
+  if (!session?.user) {
     return (
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
@@ -20,32 +34,26 @@ export async function SignInButton({ large }: { large?: boolean }) {
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>
           <DropdownMenu.Item className="hover:bg-neutral-50">
-            <Button
-              onClick={signOut}  // Directly pass signOut as a reference
-              variant="ghost"
-              size={large ? "3" : "2"}
-            >
-              Sign Out
-            </Button>
+            <a href={urls.signInUrl}>Sign In {large && "with AuthKit"}</a>
+          </DropdownMenu.Item>
+          <DropdownMenu.Item className="hover:bg-neutral-50">
+            <a href={urls.signUpUrl}>Sign Up {large && "with AuthKit"}</a>
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Root>
     );
   }
 
-  console.log("user is signed in", session.user);
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger>
         <Button size={large ? "3" : "2"}>Account</Button>
       </DropdownMenu.Trigger>
-      <DropdownMenu.Content
-      >
+      <DropdownMenu.Content>
         <DropdownMenu.Item className="hover:bg-neutral-50">
-          <a href={signInUrl}>Sign In {large && "with AuthKit"}</a>
-        </DropdownMenu.Item>
-        <DropdownMenu.Item className="hover:bg-neutral-50">
-          <a href={signUpUrl}>Sign Up {large && "with AuthKit"}</a>
+          <Button onClick={signOut} variant="ghost" size={large ? "3" : "2"}>
+            Sign Out
+          </Button>
         </DropdownMenu.Item>
       </DropdownMenu.Content>
     </DropdownMenu.Root>

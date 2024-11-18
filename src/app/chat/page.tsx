@@ -1,7 +1,6 @@
 import Heart from "@/app/components/Heart";
 import SpeakArea from "@/app/components/SpeakArea";
-import { getSessionInformation } from "@/app/auth/actions/getSession";
-import type { Session } from "@/types/index";
+import { getSession } from "@workos-inc/authkit-nextjs";
 
 const DisplayMessages = () => {
   return (
@@ -12,8 +11,9 @@ const DisplayMessages = () => {
 };
 
 export default async function ChatPage() {
-  const session: Session = await getSessionInformation();
-  const user = session.user;
+  const session = await getSession();
+  console.log("session", session);
+  const user = session?.user;
   console.log("user is signed in", user);
 
   if (!user) {
