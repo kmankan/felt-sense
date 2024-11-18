@@ -17,7 +17,6 @@ export default async function Home() {
         <Link href="/chat" className="px-8 py-4 bg-blue-600 text-white rounded-lg text-lg hover:bg-blue-700">
           Start Your Journey
         </Link>
-        <p className="mt-4 text-gray-500">Your first 60 minutes are free</p>
       </div>
     </div>
   );
