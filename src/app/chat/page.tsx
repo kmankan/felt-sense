@@ -7,8 +7,8 @@ const DisplayMessages = () => {
     <div className="flex flex-col items-center justify-center">
       <p>Instructions: </p>
       <p>Start a session to begin a conversation</p>
-      <p>When you&apos;re ready, click the blue arrow or press SPACEBAR and speak </p>
-      <p>When you&apos;re done speaking, click the blue arrow or SPACEBAR again</p>
+      <p>When you&apos;re ready, press the blue arrow and speak </p>
+      <p>When you&apos;re done speaking, press the blue arrow again</p>
     </div>
   )
 };
