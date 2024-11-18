@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { conversationQueries, messageQueries } from "../../../lib/db/queries";
 import { getSession, refreshSession } from "@workos-inc/authkit-nextjs";
-import type { UserInfo } from "@/types/index"
+import type { Session } from "@/types/index"
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     if (!userId) {
       console.log("No user ID found, trying to refresh session");
       try {
-        const refreshedSession: UserInfo = await refreshSession({ ensureSignedIn: true });
+        const refreshedSession: Session = await refreshSession({ ensureSignedIn: true });
         userId = refreshedSession.user.id;
       } catch (refreshError) {
         console.error("Session refresh failed:", refreshError);
