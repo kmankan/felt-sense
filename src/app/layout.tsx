@@ -6,6 +6,7 @@ import Link from 'next/link';
 import React from "react";
 import { SignInButton } from '@/app/components/SignInButton';
 import { Theme } from '@radix-ui/themes';
+import { ShaderBackground } from '@/app/components/ShaderBackground';
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -50,6 +51,7 @@ export default function RootLayout({
                 </div>
               </div>
             </nav>
+            <ShaderBackground />
             <main className="pt-16">
               <AuthKitProvider>{children}</AuthKitProvider>
             </main>

@@ -1,17 +1,12 @@
 "use client";
 import React, { useRef, useEffect } from "react";
 
-export default function ChatLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export function ShaderBackground() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
   useEffect(() => {
-    console.log("canvasRef", canvasRef);
     const canvas = canvasRef.current;
     if (canvas) {
-      console.log("canvas", canvas);
       const gl = canvas.getContext("webgl");
       if (gl === null) {
         console.error("WebGL not supported");
@@ -45,17 +40,14 @@ export default function ChatLayout({
         vec2 uv = gl_FragCoord.xy/resolution.xy;
         float t = time * 0.2;  // Slowed down time for gentler transitions
         
-        // Create soft, flowing movement
         float flow = smooth_mix(
           sin(uv.x * 2.0 + t + sin(uv.y + t) * 0.5),
           cos(uv.y * 2.0 - t + sin(uv.x - t) * 0.5),
           sin(t * 0.2) * 0.5 + 0.5
         );
         
-        // Normalize flow to [0,1]
         flow = flow * 0.5 + 0.5;
         
-        // Create smooth transitions between four colors
         vec3 color;
         if(flow < 0.33) {
           color = mix(pastelBlue, pastelLavender, smooth_mix(0.0, 1.0, flow * 3.0));
@@ -65,7 +57,6 @@ export default function ChatLayout({
           color = mix(pastelPink, warmBeige, smooth_mix(0.0, 1.0, (flow - 0.66) * 3.0));
         }
         
-        // Add subtle variation
         float brightness = 1.0 + sin(uv.x * 4.0 + t) * 0.05 + cos(uv.y * 4.0 - t) * 0.05;
         color *= brightness;
         
@@ -123,9 +114,10 @@ export default function ChatLayout({
       }
 
       requestAnimationFrame(render);
-      // Initialize your WebGL shader here
-      // Example: gl.clearColor(0.0, 0.0, 0.0, 1.0);
-      // gl.clear(gl.COLOR_BUFFER_BIT);
+
+      return () => {
+        window.removeEventListener('resize', resize);
+      };
     }
   }, []);
 
@@ -133,7 +125,6 @@ export default function ChatLayout({
     <>
       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -2000, background: 'linear-gradient(to right, lightblue, lightpink)' }} />
       <canvas ref={canvasRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -500 }} />
-      {children}
     </>
   );
-}
+} 
