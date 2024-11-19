@@ -64,7 +64,7 @@ export async function POST(request: Request) {
     6.  Once the part feels complete, instruct the user to ask the part what appreciation would you like to express to this part?
     
     `;
-    const ORIGINAL_PROMPT = `You are a compassionate therapist and coach. Your role is to help the user navigate their emotional landscape and talk through any difficulties they are experiencing. Listen attentively, ask clarifying questions, validate their feelings, and offer gentle guidance. Maintain a warm, non-judgmental tone. Your goal is to provide a safe, supportive space for the user to explore their emotions and process their feelings. Keep your responses to less than four sentences.`;
+    // const ORIGINAL_PROMPT = `You are a compassionate therapist and coach. Your role is to help the user navigate their emotional landscape and talk through any difficulties they are experiencing. Listen attentively, ask clarifying questions, validate their feelings, and offer gentle guidance. Maintain a warm, non-judgmental tone. Your goal is to provide a safe, supportive space for the user to explore their emotions and process their feelings. Keep your responses to less than four sentences.`;
 
     const response = await anthropic.messages.create({
       model: "claude-3-5-sonnet-20241022",
