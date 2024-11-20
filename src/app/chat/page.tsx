@@ -15,9 +15,7 @@ const DisplayMessages = () => {
 
 export default async function ChatPage() {
   const session = await getSession();
-  console.log("session", session);
   const user = session?.user;
-  console.log("user is signed in", user);
 
   if (!user) {
     return <div>User is not signed in</div>;
@@ -34,7 +32,7 @@ export default async function ChatPage() {
       </div>
       <DisplayMessages />
       <div>
-        <div className="flex absolute top-1/2 left-1/2 max-sm:bottom-0 max-sm:left-1/2 w-[60%] h-[50%] sm:w-[40%] sm:h-[50%] bg-white rounded-lg transform -translate-x-1/2 sm:-translate-y-28  shadow-lg opacity-75">
+        <div className="flex absolute top-[60%] left-1/2 max-sm:top-[63%] w-[60%] h-[50%] sm:w-[40%] sm:h-[50%] bg-white rounded-lg transform -translate-x-1/2 -translate-y-1/2 shadow-lg opacity-75">
           <div className="flex flex-col items-center justify-center self-end mx-auto h-full relative">
             <Heart />
             <SpeakArea />
