@@ -3,6 +3,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { conversationQueries, messageQueries } from "../../../lib/db/queries";
 import { getSession, refreshSession } from "@workos-inc/authkit-nextjs";
 import type { Session } from "@/types/index"
+import { EMOTIONALLY_ATTUNED_COMPANION_PROMPT } from "./prompts";
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -52,22 +53,12 @@ export async function POST(request: Request) {
       );
     }
     console.log("claude-3-5-sonnet-20241022");
-    const IFS_PROMPT = `
-    You are a compassionate IFS coach. Guide the user through the IFS process. Navigate through the following steps sequentially:
-    1. Check in with the user's parts. Give the user space to say what parts are alive. Do this until the user feels complete.
-    2. Once the user feels complete, ask them what they would like to work on.
-    3. Once the user has chosen a part to work on, invite them to make gentle contact with the part.
-    4. Once the user feels complete, instruct the user to ask the part how it is trying to protect them.
-    5. Once the part feels complete, instruct the user to ask the part what it needs to be safe.
-    6.  Once the part feels complete, instruct the user to ask the part what appreciation would you like to express to this part?
-    
-    `;
     
     // const ORIGINAL_PROMPT = `You are a compassionate therapist and coach. Your role is to help the user navigate their emotional landscape and talk through any difficulties they are experiencing. Listen attentively, ask clarifying questions, validate their feelings, and offer gentle guidance. Maintain a warm, non-judgmental tone. Your goal is to provide a safe, supportive space for the user to explore their emotions and process their feelings. Keep your responses to less than four sentences.`;
     const response = await anthropic.messages.create({
       model: "claude-3-5-sonnet-20241022",
       max_tokens: 1000,
-      system: IFS_PROMPT,
+      system: EMOTIONALLY_ATTUNED_COMPANION_PROMPT,
       messages: filteredMessages,
     });
 
