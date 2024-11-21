@@ -15,6 +15,7 @@
     "@radix-ui/themes": "^3.1.6",
     "@workos-inc/authkit-nextjs": "0.15.0",
     "next": "15.0.3",
+    "openai": "^4.73.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-sound-visualizer": "^1.1.1",
