@@ -51,29 +51,41 @@ export const callLLM = async (conversationId: string) => {
 };
 
 export const speakText = async (text: string) => {
+  console.log('Client: Starting TTS request');
   const response = await fetch("/api/tts", {
     method: "POST",
+    headers: {
+      'Content-Type': 'application/json'
+    },
     body: JSON.stringify({ text }),
   });
 
-  // Read the entire stream instead of just the first chunk
-
-  const chunks = [];
+  const chunks: Uint8Array[] = [];
   const reader = response.body.getReader();
 
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    console.log("pushing chunk");
-    chunks.push(value);
+  // Collect all chunks first
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+      console.log('Client: Received chunk:', chunks.length);
+    }
+
+    // Play the complete audio once
+    const audioBlob = new Blob(chunks, { type: "audio/wav" });
+    const audioUrl = URL.createObjectURL(audioBlob);
+    const audio = new Audio(audioUrl);
+    
+    // Clean up the URL after playback
+    audio.onended = () => {
+      URL.revokeObjectURL(audioUrl);
+    };
+    
+    await audio.play();
+
+  } catch (error) {
+    console.error('Client: Error processing audio:', error);
+    throw error;
   }
-  console.log(chunks[0], chunks.length);
-
-  const audioBlob = new Blob(chunks, { type: "audio/wav" }); // Adjust mime type if needed
-  const audioUrl = URL.createObjectURL(audioBlob);
-
-  const audio = new Audio(audioUrl);
-  console.log("about to play audio");
-  await audio.play();
-  console.log("played audio");
 };
