@@ -10,13 +10,15 @@ export async function POST(request: Request) {
     model: "tts-1-hd",
     voice: "onyx",
     input: text,
-    response_format: "opus",
+    response_format: "mp3",
   });
+
+  console.log("recieved response:", response);
 
   // Stream the audio response directly to the client
   return new Response(response.body, {
     headers: {
-      'Content-Type': 'audio/opus',
+      'Content-Type': 'audio/mpeg',
       'Transfer-Encoding': 'chunked',
     },
   });

@@ -26,8 +26,12 @@ async function main() {
   const stream = response.body;
   const writer = fs.createWriteStream(speechFile);
 
-  for await (const chunk of stream) {
-    writer.write(chunk);
+  // Convert Web ReadableStream to Node readable stream
+  const reader = stream.getReader();
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    writer.write(value);
   }
 
   writer.end();

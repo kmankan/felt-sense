@@ -15,30 +15,51 @@ export default function AudioPlayer() {
 
       if (!response.ok) throw new Error('Audio generation failed');
 
-      // Get the audio data as ArrayBuffer
-      const arrayBuffer = await response.arrayBuffer();
-      console.log("arrayBuffer", arrayBuffer);
+      const mediaSource = new MediaSource();
+      const audio = new Audio();
+      audio.src = URL.createObjectURL(mediaSource);
 
-      // Create AudioContext
-      const audioContext = new AudioContext();
-      console.log("audioContext", audioContext);
+      mediaSource.addEventListener('sourceopen', async () => {
+        const sourceBuffer = mediaSource.addSourceBuffer('audio/mpeg');
+        const reader = response.body?.getReader();
+        if (!reader) throw new Error('No reader available');
 
-      // Decode the audio data
-      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-      console.log("audioBuffer", audioBuffer);
+        const MINIMUM_CHUNK_SIZE = 64 * 1024; // 64KB buffer size
+        let buffer = new Uint8Array(0);
 
-      // Create a buffer source
-      const source = audioContext.createBufferSource();
-      source.buffer = audioBuffer;
-      source.connect(audioContext.destination);
-      console.log("source", source);
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
 
-      // Play the audio
-      source.start(0);
+          buffer = concatenateArrays(buffer, value);
 
-      // Cleanup
-      source.onended = () => {
-        audioContext.close();
+          if (buffer.length >= MINIMUM_CHUNK_SIZE) {
+            if (!sourceBuffer.updating) {
+              sourceBuffer.appendBuffer(buffer);
+              buffer = new Uint8Array(0);
+            }
+          }
+        }
+
+        if (buffer.length > 0 && !sourceBuffer.updating) {
+          sourceBuffer.appendBuffer(buffer);
+        }
+
+        await new Promise(resolve => {
+          if (!sourceBuffer.updating) {
+            resolve(undefined);
+          } else {
+            sourceBuffer.addEventListener('updateend', () => resolve(undefined), { once: true });
+          }
+        });
+
+        mediaSource.endOfStream();
+      });
+
+      await audio.play();
+
+      audio.onended = () => {
+        URL.revokeObjectURL(audio.src);
       };
 
     } catch (error) {
@@ -63,4 +84,11 @@ export default function AudioPlayer() {
       </button>
     </div>
   );
+}
+
+function concatenateArrays(a1: Uint8Array, a2: Uint8Array): Uint8Array {
+  const result = new Uint8Array(a1.length + a2.length);
+  result.set(a1, 0);
+  result.set(a2, a1.length);
+  return result;
 }
