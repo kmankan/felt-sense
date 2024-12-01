@@ -7,7 +7,7 @@ export default function AudioPlayer() {
 
   const playAudio = async () => {
     try {
-      const response = await fetch('/api/tts/test', {
+      const response = await fetch('/api/tts/test/openAI', {
         method: 'POST',
         body: JSON.stringify({ text }),
         headers: { 'Content-Type': 'application/json' },
