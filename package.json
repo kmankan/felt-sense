@@ -22,9 +22,6 @@
     "play-sound": "^1.1.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-sound-visualizer": "^1.1.1",
-    "speaker": "^0.5.5",
-    "uuid": "^11.0.3",
     "vitest": "^2.1.6",
     "zustand": "^5.0.1"
   },
