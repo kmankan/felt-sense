@@ -1,14 +1,16 @@
 import { ElevenLabsClient } from "elevenlabs";
 
 export async function POST(request: Request) {
-  const { text } = await request.json();
+  const { text, voiceId } = await request.json();
+  console.log("the user selected voiceId: \n", voiceId);
+  console.log("the user sent text: \n", text);
   
   const client = new ElevenLabsClient({
     apiKey: process.env.ELEVENLABS_API_KEY,
   });
 
   const audioStream = await client.generate({
-    voice: "Brian",
+    voice: voiceId,
     model_id: "eleven_turbo_v2_5",
     text,
   });
