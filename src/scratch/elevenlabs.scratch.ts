@@ -1,4 +1,4 @@
-import { ElevenLabsClient, stream } from "elevenlabs";
+import { ElevenLabsClient } from "elevenlabs";
 
 import * as dotenv from "dotenv";
 import path from "path";

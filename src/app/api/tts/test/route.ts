@@ -1,4 +1,4 @@
-import { ElevenLabsClient, stream } from "elevenlabs";
+import { ElevenLabsClient } from "elevenlabs";
 
 export async function POST(request: Request) {
   const { text } = await request.json();
