@@ -35,8 +35,17 @@ export default function DisplayMessages() {
     fetchConversation();
   }, [conversationId, currentMessage]); // Re-fetch when currentMessage changes
 
+  useEffect(() => {
+    const messageContainer = document.querySelector('.message-container');
+    if (messageContainer) {
+      messageContainer.scrollTop = messageContainer.scrollHeight;
+    }
+  }, [conversation]); // Run whenever conversation updates
+
   return (
-    <div className="h-[220px] w-[90%] mx-auto overflow-y-auto p-4 bg-white/80 rounded-lg shadow-inner opacity-75">
+    <div
+      className="h-[220px] w-[90%] mx-auto overflow-y-auto p-4 bg-white/80 rounded-lg shadow-inner opacity-75 message-container"
+    >
       <div className="space-y-4">
         {conversation?.messages.map((message, index) => (
           <div
