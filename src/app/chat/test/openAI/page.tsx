@@ -31,7 +31,7 @@ export default function AudioPlayer() {
           const { done, value } = await reader.read();
           if (done) break;
 
-          buffer = concatenateArrays(buffer, value);
+          buffer = concatenateArrays(buffer, new Uint8Array(value as ArrayBuffer));
 
           if (buffer.length >= MINIMUM_CHUNK_SIZE) {
             if (!sourceBuffer.updating) {
@@ -90,5 +90,5 @@ function concatenateArrays(a1: Uint8Array, a2: Uint8Array): Uint8Array {
   const result = new Uint8Array(a1.length + a2.length);
   result.set(a1, 0);
   result.set(a2, a1.length);
-  return result;
+  return result as Uint8Array;
 }
