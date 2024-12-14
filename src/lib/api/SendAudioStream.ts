@@ -95,10 +95,43 @@ export const generateSpeech = async (text: string) => {
 
     if (!response.ok) throw new Error('Audio generation failed');
 
+    // Check if MediaSource is supported
+    if (!window.MediaSource) {
+      // Fallback for browsers without MediaSource (like iOS)
+      const audioData = await response.blob();
+      const audio = new Audio(URL.createObjectURL(audioData));
+      audio.setAttribute('playsinline', '');
+      audio.setAttribute('webkit-playsinline', '');
+      
+      try {
+        await audio.play();
+      } catch (e) {
+        if (e.name === 'NotAllowedError') {
+          // For mobile, we might need to retry on user interaction
+          document.addEventListener('touchend', async () => {
+            try {
+              await audio.play();
+            } catch (err) {
+              console.error('Mobile audio play failed:', err);
+            }
+          }, { once: true });
+        }
+        throw e;
+      }
+
+      return new Promise((resolve) => {
+        audio.onended = () => {
+          URL.revokeObjectURL(audio.src);
+          resolve(undefined);
+        };
+      });
+    }
+
+    // Standard MediaSource implementation for supported browsers
     const mediaSource = new MediaSource();
     const audio = new Audio();
     
-    // Add mobile support attributes
+    // Add mobile support attributes (these don't hurt desktop)
     audio.setAttribute('playsinline', '');
     audio.setAttribute('webkit-playsinline', '');
     audio.muted = false;
@@ -152,7 +185,6 @@ export const generateSpeech = async (text: string) => {
         await audio.play();
       } catch (e) {
         if (e.name === 'NotAllowedError') {
-          // For mobile, we might need to retry on user interaction
           document.addEventListener('touchend', async () => {
             try {
               await audio.play();
