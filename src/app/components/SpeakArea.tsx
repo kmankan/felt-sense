@@ -25,33 +25,40 @@ export default function SpeakArea() {
         // Only initialize if conversationId
         if (conversationId) {
             const initMediaRecorder = async () => {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-                const context = new AudioContext();
-                const analyserNode = context.createAnalyser();
-                analyserNode.fftSize = 32;
+                    // Create and resume audio context
+                    const context = new AudioContext();
+                    await context.resume();
+                    const analyserNode = context.createAnalyser();
+                    analyserNode.fftSize = 32;
 
-                const source = context.createMediaStreamSource(stream);
-                source.connect(analyserNode);
+                    const source = context.createMediaStreamSource(stream);
+                    source.connect(analyserNode);
 
-                setAudioContext(context);
-                setAnalyser(analyserNode);
+                    setAudioContext(context);
+                    setAnalyser(analyserNode);
 
-                const recorder = new MediaRecorder(stream);
-                setMediaRecorder(recorder);
+                    const recorder = new MediaRecorder(stream);
+                    setMediaRecorder(recorder);
 
-                recorder.ondataavailable = async (event) => {
-                    if (event.data.size > 0) {
-                        const audioBlob = new Blob([event.data], { type: "audio/wav" });
-                        const audioStream = audioBlob.stream();
+                    recorder.ondataavailable = async (event) => {
+                        if (event.data.size > 0) {
+                            const audioBlob = new Blob([event.data], { type: "audio/wav" });
+                            const audioStream = audioBlob.stream();
 
-                        await transcribeAudioStream(audioStream, conversationId);
-                        const response = await callLLM(conversationId);
-                        setCurrentMessage(response.response);
-                        generateSpeech(response.response);
-                        console.log("response", response);
-                    }
-                };
+                            await transcribeAudioStream(audioStream, conversationId);
+                            const response = await callLLM(conversationId);
+                            setCurrentMessage(response.response);
+                            setConversationState("speaking");
+                            await generateSpeech(response.response);
+                            setConversationState("thinking");
+                        }
+                    };
+                } catch (error) {
+                    console.error("Error initializing media recorder:", error);
+                }
             };
 
             initMediaRecorder();
@@ -95,25 +102,41 @@ export default function SpeakArea() {
     }, [isRecording, analyser]);
     // console.log(volumeLevels);
 
-    const recordAudio = () => {
-        console.log("Recording audio");
-        if (mediaRecorder) {
-            mediaRecorder.start();
-            setIsRecording(true);
-            console.log("Recording started");
-            setConversationState("listening");
+    const recordAudio = async () => {
+        try {
+            console.log("Recording audio");
+            if (mediaRecorder && audioContext) {
+                if (audioContext.state === 'suspended') {
+                    await audioContext.resume();
+                }
+                mediaRecorder.start();
+                setIsRecording(true);
+                console.log("Recording started");
+                setConversationState("listening");
+            }
+        } catch (error) {
+            console.error("Error starting recording:", error);
         }
     };
 
-    const stopAudio = () => {
+    const stopAudio = async () => {
         console.log("Stopping audio");
         if (mediaRecorder) {
             mediaRecorder.stop();
             setIsRecording(false);
             console.log("Audio stopped");
             setConversationState("thinking");
-        }
 
+            // Pre-initialize audio playback permission
+            const audio = new Audio();
+            try {
+                // Quick silent audio play to get permission
+                await audio.play().catch(() => { });
+                audio.pause();
+            } catch (e) {
+                console.log("Permission pre-initialization attempted:", e);
+            }
+        }
     };
 
     // For space bar recording  

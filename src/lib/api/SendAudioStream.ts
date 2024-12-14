@@ -141,11 +141,27 @@ export const generateSpeech = async (text: string) => {
       mediaSource.endOfStream();
     });
 
-    await audio.play();
+    try {
+      // Try to play
+      await audio.play().catch(async (e) => {
+        if (e.name === 'NotAllowedError') {
+          // If it fails, try one more time with user interaction
+          const playPromise = audio.play();
+          if (playPromise !== undefined) {
+            await playPromise;
+          }
+        } else {
+          throw e;
+        }
+      });
 
-    audio.onended = () => {
-      URL.revokeObjectURL(audio.src);
-    };
+      audio.onended = () => {
+        URL.revokeObjectURL(audio.src);
+      };
+    } catch (error) {
+      console.error('Error playing audio:', error);
+      throw error;
+    }
 
   } catch (error) {
     console.error('Error playing audio:', error);
