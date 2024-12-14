@@ -17,7 +17,8 @@ export default function SpeakArea() {
         conversationId,
         setConversationId,
         setCurrentMessage,
-        setConversationInitiated
+        setConversationInitiated,
+        voice,
     } = useChatStore();
     const [showModal, setShowModal] = useState(true);
     const [isMobile] = useState(() => /iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
@@ -53,7 +54,7 @@ export default function SpeakArea() {
                             const response = await callLLM(conversationId);
                             setCurrentMessage(response.response);
                             setConversationState("speaking");
-                            await generateSpeech(response.response);
+                            await generateSpeech(response.response, voice);
                             setConversationState("thinking");
                         }
                     };

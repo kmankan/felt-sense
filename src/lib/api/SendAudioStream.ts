@@ -78,7 +78,7 @@ export const speakText = async (text: string) => {
   console.log("played audio");
 };
 
-export const generateSpeech = async (text: string) => {
+export const generateSpeech = async (text: string, voice: string) => {
   function concatenateArrays(a1: Uint8Array, a2: Uint8Array): Uint8Array {
     const result = new Uint8Array(a1.length + a2.length);
     result.set(a1, 0);
@@ -89,7 +89,7 @@ export const generateSpeech = async (text: string) => {
   try {
     const response = await fetch('/api/tts', {
       method: 'POST',
-      body: JSON.stringify({ text }),
+      body: JSON.stringify({ text, voice }),
       headers: { 'Content-Type': 'application/json' },
     });
 

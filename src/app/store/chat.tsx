@@ -9,6 +9,8 @@ interface ChatStore {
     setConversationId: (conversationId: string | null) => void
     setCurrentMessage: (message: string) => void
     setConversationInitiated: (initiated: boolean) => void
+    voice: string
+    setVoice: (voice: string) => void
 }
 
 export const useChatStore = create<ChatStore>((set) => ({
@@ -20,4 +22,6 @@ export const useChatStore = create<ChatStore>((set) => ({
     setConversationId: (conversationId: string | null) => set({ conversationId }),
     setCurrentMessage: (currentMessage: string) => set({ currentMessage }),
     setConversationInitiated: (conversationInitiated: boolean) => set({ conversationInitiated }),
+    voice: "nova",
+    setVoice: (voice: string) => set({ voice }),
 }));
