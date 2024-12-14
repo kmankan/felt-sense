@@ -35,6 +35,7 @@ export const conversationQueries = {
     userId: string,
     conversationId: string
   ): Promise<ConversationWithMessages | null> {
+    const start = performance.now();
     const conversation = await prisma.conversation.findUnique({
       where: { id: conversationId },
       include: {
@@ -44,6 +45,9 @@ export const conversationQueries = {
         },
       },
     });
+    const end = performance.now();
+    console.log(`getConversation query took ${end - start}ms`);
+    
     if (!conversation || conversation.user.userId !== userId) {
       console.error("Conversation not found/unauthorized access");
       return null;

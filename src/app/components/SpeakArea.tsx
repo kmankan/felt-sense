@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import React, { useState, useEffect } from "react";
-import { transcribeAudioStream, speakText, callLLM } from "@/lib/api/SendAudioStream";
+import { transcribeAudioStream, callLLM, generateSpeech } from "@/lib/api/SendAudioStream";
 import { useChatStore } from "@/app/store/chat";
 import { createNewConversation } from "@/lib/api/newConversation";
 
@@ -11,7 +11,14 @@ export default function SpeakArea() {
     const [volumeLevels, setVolumeLevels] = useState<number[]>(Array(15).fill(0));
     const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
     const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
-    const { conversationState, setConversationState, conversationId, setConversationId } = useChatStore();
+    const {
+        conversationState,
+        setConversationState,
+        conversationId,
+        setConversationId,
+        setCurrentMessage,
+        setConversationInitiated
+    } = useChatStore();
     const [showModal, setShowModal] = useState(true);
 
     useEffect(() => {
@@ -34,13 +41,14 @@ export default function SpeakArea() {
                 setMediaRecorder(recorder);
 
                 recorder.ondataavailable = async (event) => {
-                    if (event.data.size > 0) {  // Removed conversationId check since we know it exists
+                    if (event.data.size > 0) {
                         const audioBlob = new Blob([event.data], { type: "audio/wav" });
                         const audioStream = audioBlob.stream();
 
                         await transcribeAudioStream(audioStream, conversationId);
                         const response = await callLLM(conversationId);
-                        speakText(response.response);
+                        setCurrentMessage(response.response);
+                        generateSpeech(response.response);
                         console.log("response", response);
                     }
                 };
@@ -131,6 +139,7 @@ export default function SpeakArea() {
         // create a new conversation
         const conversation = await createNewConversation();
         setConversationId(conversation.id);
+        setConversationInitiated(true);
         console.log("Conversation created with id: ", conversation.id);
         setShowModal(false);
     };

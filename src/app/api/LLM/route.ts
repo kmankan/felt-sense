@@ -52,12 +52,11 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-    console.log("claude-3-5-sonnet-20241022");
     
     // const ORIGINAL_PROMPT = `You are a compassionate therapist and coach. Your role is to help the user navigate their emotional landscape and talk through any difficulties they are experiencing. Listen attentively, ask clarifying questions, validate their feelings, and offer gentle guidance. Maintain a warm, non-judgmental tone. Your goal is to provide a safe, supportive space for the user to explore their emotions and process their feelings. Keep your responses to less than four sentences.`;
     //model: "claude-3-opus-latest",
     const response = await anthropic.messages.create({
-      model: "claude-3-5-haiku-latest",
+      model: "claude-3-5-sonnet-latest",
       max_tokens: 1000,
       system: EMOTIONALLY_ATTUNED_COMPANION_PROMPT,
       messages: filteredMessages,

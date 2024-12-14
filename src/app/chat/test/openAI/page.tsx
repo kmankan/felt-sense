@@ -25,13 +25,17 @@ export default function AudioPlayer() {
         if (!reader) throw new Error('No reader available');
 
         const MINIMUM_CHUNK_SIZE = 64 * 1024; // 64KB buffer size
-        let buffer = new Uint8Array(0);
+        let buffer: Uint8Array = new Uint8Array(0);
 
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
 
-          buffer = concatenateArrays(buffer, value);
+          if (value instanceof Uint8Array) {
+            buffer = concatenateArrays(buffer, value);
+          } else {
+            throw new Error('Unexpected chunk type');
+          }
 
           if (buffer.length >= MINIMUM_CHUNK_SIZE) {
             if (!sourceBuffer.updating) {
