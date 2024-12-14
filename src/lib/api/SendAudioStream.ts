@@ -103,21 +103,39 @@ export const generateSpeech = async (text: string) => {
       audio.setAttribute('playsinline', '');
       audio.setAttribute('webkit-playsinline', '');
       
-      try {
-        await audio.play();
-      } catch (e) {
-        if (e.name === 'NotAllowedError') {
-          // For mobile, we might need to retry on user interaction
-          document.addEventListener('touchend', async () => {
-            try {
-              await audio.play();
-            } catch (err) {
-              console.error('Mobile audio play failed:', err);
+      const playWithRetry = async () => {
+        try {
+          // Try unmuted first
+          await audio.play();
+        } catch (e) {
+          if (e.name === 'NotAllowedError') {
+            // If that fails, try muted first, then unmute
+            audio.muted = true;
+            await audio.play();
+            audio.muted = false;
+            
+            // If we still need user interaction, add a one-time touch handler
+            if (audio.paused) {
+              return new Promise((resolve) => {
+                const touchPlay = async () => {
+                  try {
+                    await audio.play();
+                    document.removeEventListener('touchend', touchPlay);
+                    resolve(undefined);
+                  } catch (err) {
+                    console.error('Touch play failed:', err);
+                  }
+                };
+                document.addEventListener('touchend', touchPlay, { once: true });
+              });
             }
-          }, { once: true });
+          } else {
+            throw e;
+          }
         }
-        throw e;
-      }
+      };
+
+      await playWithRetry();
 
       return new Promise((resolve) => {
         audio.onended = () => {
