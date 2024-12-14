@@ -16,9 +16,9 @@
     "@workos-inc/authkit-nextjs": "0.15.0",
     "boilerpl8": "^1.1.1",
     "dotenv": "^16.4.7",
-    "elevenlabs": "^0.18.1",
+    "elevenlabs": "^0.18.2",
     "next": "15.0.3",
-    "openai": "^4.76.1",
+    "openai": "^4.76.3",
     "play-sound": "^1.1.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -26,7 +26,7 @@
     "zustand": "^5.0.2"
   },
   "devDependencies": {
-    "@types/node": "^22.10.1",
+    "@types/node": "^22.10.2",
     "@types/react": "^18.3.16",
     "@types/react-dom": "^18.3.5",
     "eslint": "^8.57.1",
