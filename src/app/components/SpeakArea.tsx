@@ -20,6 +20,7 @@ export default function SpeakArea() {
         setConversationInitiated
     } = useChatStore();
     const [showModal, setShowModal] = useState(true);
+    const [isMobile] = useState(() => /iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
 
     useEffect(() => {
         // Only initialize if conversationId
@@ -120,21 +121,31 @@ export default function SpeakArea() {
     };
 
     const stopAudio = async () => {
-        console.log("Stopping audio");
+        console.log("Stopping audio", isMobile ? "on mobile" : "on desktop");
         if (mediaRecorder) {
             mediaRecorder.stop();
             setIsRecording(false);
             console.log("Audio stopped");
             setConversationState("thinking");
 
-            // Pre-initialize audio playback permission
+            // Pre-initialize audio for both mobile and desktop
             const audio = new Audio();
             try {
-                // Quick silent audio play to get permission
-                await audio.play().catch(() => { });
-                audio.pause();
+                if (isMobile) {
+                    // Mobile needs more careful initialization
+                    audio.muted = true;
+                    await audio.play().catch(() => { });
+                    audio.pause();
+                    audio.muted = false;
+                    console.log("Mobile audio pre-initialized");
+                } else {
+                    // Desktop initialization
+                    await audio.play().catch(() => { });
+                    audio.pause();
+                    console.log("Desktop audio pre-initialized");
+                }
             } catch (e) {
-                console.log("Permission pre-initialization attempted:", e);
+                console.log("Audio pre-initialization failed:", e);
             }
         }
     };
