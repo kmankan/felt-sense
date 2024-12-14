@@ -79,7 +79,6 @@ export const speakText = async (text: string) => {
 };
 
 export const generateSpeech = async (text: string) => {
-  
   function concatenateArrays(a1: Uint8Array, a2: Uint8Array): Uint8Array {
     const result = new Uint8Array(a1.length + a2.length);
     result.set(a1, 0);
@@ -98,6 +97,12 @@ export const generateSpeech = async (text: string) => {
 
     const mediaSource = new MediaSource();
     const audio = new Audio();
+    
+    // Add mobile support attributes
+    audio.setAttribute('playsinline', '');
+    audio.setAttribute('webkit-playsinline', '');
+    audio.muted = false;
+    
     audio.src = URL.createObjectURL(mediaSource);
 
     mediaSource.addEventListener('sourceopen', async () => {
@@ -105,7 +110,7 @@ export const generateSpeech = async (text: string) => {
       const reader = response.body?.getReader();
       if (!reader) throw new Error('No reader available');
 
-      const MINIMUM_CHUNK_SIZE = 64 * 1024; // 64KB buffer size
+      const MINIMUM_CHUNK_SIZE = 64 * 1024;
       let buffer: Uint8Array = new Uint8Array(0);
 
       while (true) {
@@ -141,29 +146,33 @@ export const generateSpeech = async (text: string) => {
       mediaSource.endOfStream();
     });
 
-    try {
-      // Try to play
-      await audio.play().catch(async (e) => {
+    // Mobile-friendly play attempt
+    const playAudio = async () => {
+      try {
+        await audio.play();
+      } catch (e) {
         if (e.name === 'NotAllowedError') {
-          // If it fails, try one more time with user interaction
-          const playPromise = audio.play();
-          if (playPromise !== undefined) {
-            await playPromise;
-          }
-        } else {
-          throw e;
+          // For mobile, we might need to retry on user interaction
+          document.addEventListener('touchend', async () => {
+            try {
+              await audio.play();
+            } catch (err) {
+              console.error('Mobile audio play failed:', err);
+            }
+          }, { once: true });
         }
-      });
+        throw e;
+      }
+    };
 
-      audio.onended = () => {
-        URL.revokeObjectURL(audio.src);
-      };
-    } catch (error) {
-      console.error('Error playing audio:', error);
-      throw error;
-    }
+    await playAudio();
+
+    audio.onended = () => {
+      URL.revokeObjectURL(audio.src);
+    };
 
   } catch (error) {
     console.error('Error playing audio:', error);
+    throw error;
   }
-}
+};
