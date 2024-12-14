@@ -2,6 +2,7 @@ import Heart from "@/app/components/Heart";
 import SpeakArea from "@/app/components/SpeakArea";
 import { getSession } from "@workos-inc/authkit-nextjs";
 import ClientWrapper from "@/app/components/ClientWrapper";
+import { VoiceToggle } from "../components/VoiceToggle";
 
 export default async function ChatPage() {
   const session = await getSession();
@@ -26,6 +27,7 @@ export default async function ChatPage() {
           <div className="flex flex-col items-center justify-center self-end mx-auto h-full relative">
             <Heart />
             <SpeakArea />
+            <VoiceToggle />
           </div>
         </div>
       </div>

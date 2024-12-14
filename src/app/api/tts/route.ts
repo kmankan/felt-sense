@@ -41,14 +41,15 @@ export const runtime = 'edge';
 // }
 
 export async function POST(request: Request) {
-  const { text } = await request.json();
+  const { text, voice } = await request.json();
   console.log("recieved POST request with:", text);
   
   const openai = new OpenAI();
+  console.log("sending request to openai with voice: ", voice);
 
   const response = await openai.audio.speech.create({
     model: "tts-1-hd",
-    voice: "nova",
+    voice: voice,
     input: text,
     response_format: "mp3",
   });
