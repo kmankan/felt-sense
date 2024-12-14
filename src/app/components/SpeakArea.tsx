@@ -54,6 +54,7 @@ export default function SpeakArea() {
                             const response = await callLLM(conversationId);
                             setCurrentMessage(response.response);
                             setConversationState("speaking");
+                            console.log("Voice: ", voice);
                             await generateSpeech(response.response, voice);
                             setConversationState("thinking");
                         }
@@ -65,6 +66,7 @@ export default function SpeakArea() {
 
             initMediaRecorder();
             console.log("Media recorder initialized");
+            console.log("Voice: ", voice);
         }
 
         return () => {
@@ -72,7 +74,7 @@ export default function SpeakArea() {
                 audioContext.close();
             }
         };
-    }, [conversationId]);
+    }, [conversationId, voice]);
 
     /// For audio animation
     useEffect(() => {
