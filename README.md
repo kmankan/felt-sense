@@ -119,6 +119,3 @@ npm run dev
 
 6. Access the application at `http://localhost:3000`.
 
-## License
-
-This project is open-sourced under the MIT License - see the LICENSE file for details.
