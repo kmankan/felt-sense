@@ -2,7 +2,7 @@
 
 <div>
     <a href="https://www.loom.com/share/d73dcd71a85645b98cfaa75190e3c550">
-      <p>Felt Sense: AI Voice Companion</p>
+      <p>Felt Sense: AI Voice Companion Walkthrough</p>
     </a>
     <a href="https://www.loom.com/share/d73dcd71a85645b98cfaa75190e3c550">
       <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/d73dcd71a85645b98cfaa75190e3c550-21806859b3343b0a-full-play.gif">
