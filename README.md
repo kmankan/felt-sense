@@ -1,5 +1,14 @@
 # Felt Sense
 
+<div>
+    <a href="https://www.loom.com/share/d73dcd71a85645b98cfaa75190e3c550">
+      <p>Felt Sense: AI Voice Companion</p>
+    </a>
+    <a href="https://www.loom.com/share/d73dcd71a85645b98cfaa75190e3c550">
+      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/d73dcd71a85645b98cfaa75190e3c550-21806859b3343b0a-full-play.gif">
+    </a>
+  </div>
+
 Felt Sense is an AI Assistant that helps you navigate your emotional life through patient natural conversations and emotional intelligence.
 
 ## Project Overview
