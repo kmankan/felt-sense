@@ -95,12 +95,12 @@ cp .env.example .env
 
 Required environment variables:
 
-DATABASE_URL="your-neon-db-url"
-WORKOS_API_KEY="your-workos-key"
-WORKOS_CLIENT_ID="your-workos-client-id"
-ANTHROPIC_API_KEY="your-claude-api-key"
-DEEPGRAM_API_KEY="your-deepgram-key"
-OPENAI_API_KEY="your-openai-key"
+- DATABASE_URL="your-neon-db-url"
+- WORKOS_API_KEY="your-workos-key"
+- WORKOS_CLIENT_ID="your-workos-client-id"
+- ANTHROPIC_API_KEY="your-claude-api-key"
+- DEEPGRAM_API_KEY="your-deepgram-key"
+- OPENAI_API_KEY="your-openai-key"
 
 4. Initialize the database:
 
