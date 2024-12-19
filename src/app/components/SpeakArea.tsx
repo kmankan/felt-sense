@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+// adding some comments
 "use client";
 import React, { useState, useEffect } from "react";
 import { transcribeAudioStream, callLLM, generateSpeech } from "@/lib/api/SendAudioStream";
